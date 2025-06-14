@@ -22,7 +22,7 @@ jobs:
 
           mkdir "$GITHUB_GRAPHQL_CLIENT"
           cp "$GITHUB_GRAPHQL_GENERATOR_CONFIG" "$GITHUB_GRAPHQL_CLIENT/pyproject.toml"
-          curl -O "https://docs.github.com/public/fpt/schema.docs.graphql" -o "$GITHUB_GRAPHQL_CLIENT/schema.graphql"
+          curl "https://docs.github.com/public/fpt/schema.docs.graphql" -o "$GITHUB_GRAPHQL_CLIENT/schema.graphql"
 
           (cd "$GITHUB_GRAPHQL_CLIENT" && ariadne-codegen client)
 
