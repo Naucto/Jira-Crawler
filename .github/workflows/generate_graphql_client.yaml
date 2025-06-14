@@ -1,0 +1,31 @@
+name: Generate Python GraphQL Client
+jobs:
+  generate_graphql_client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install ariadne-codegen
+      - name: Generate GraphQL client
+        run: |
+          GITHUB_GRAPHQL_CLIENT=/tmp/github_graphql_client
+
+          (
+            mkdir "$GITHUB_GRAPHQL_CLIENT" &&
+            cp pyproject.toml "$GITHUB_GRAPHQL_CLIENT" &&
+            cd "$GITHUB_GRAPHQL_CLIENT" &&
+            ariadne-codegen client
+          )
+
+          cp -r "$GITHUB_GRAPHQL_CLIENT/graphql_client" .
+      - name: Push generated GraphQL client to repository
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          author_name: "Naucto GraphQL Client Generator"
+          message: "[CLIENT] [UPDATE] Update auto-generated GraphQL client"
