@@ -1,4 +1,5 @@
 name: Generate Python GraphQL Client
+on: [workflow_dispatch]
 jobs:
   generate_graphql_client:
     runs-on: ubuntu-latest
