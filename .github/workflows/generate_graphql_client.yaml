@@ -18,7 +18,7 @@ jobs:
 
           (
             mkdir "$GITHUB_GRAPHQL_CLIENT" &&
-            cp pyproject.toml "$GITHUB_GRAPHQL_CLIENT" &&
+            cp ./pyproject.toml "$GITHUB_GRAPHQL_CLIENT" &&
             cd "$GITHUB_GRAPHQL_CLIENT" &&
             ariadne-codegen client
           )
