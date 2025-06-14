@@ -5,25 +5,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install ariadne-codegen
+
       - name: Generate GraphQL client
         run: |
           GITHUB_GRAPHQL_CLIENT=/tmp/github_graphql_client
+          GITHUB_GRAPHQL_GENERATOR_CONFIG="$GITHUB_WORKSPACE/.github/workflows/generate_graphql_client_config.toml"
 
-          (
-            mkdir "$GITHUB_GRAPHQL_CLIENT" &&
-            cp ./pyproject.toml "$GITHUB_GRAPHQL_CLIENT" &&
-            cd "$GITHUB_GRAPHQL_CLIENT" &&
-            ariadne-codegen client
-          )
+          mkdir "$GITHUB_GRAPHQL_CLIENT"
+          cp "$GITHUB_GRAPHQL_GENERATOR_CONFIG" "$GITHUB_GRAPHQL_CLIENT/pyproject.toml"
+          curl -O "https://docs.github.com/public/fpt/schema.docs.graphql" -o "$GITHUB_GRAPHQL_CLIENT/schema.graphql"
+
+          (cd "$GITHUB_GRAPHQL_CLIENT" && ariadne-codegen client)
 
           cp -r "$GITHUB_GRAPHQL_CLIENT/graphql_client" .
+
       - name: Push generated GraphQL client to repository
         uses: actions-js/push@master
         with:
