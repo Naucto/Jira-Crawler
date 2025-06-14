@@ -30,6 +30,8 @@ jobs:
 
       - name: Push generated GraphQL client to repository
         uses: actions-js/push@master
+        permissions:
+          contents: read
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           author_name: "Naucto GraphQL Client Generator"
