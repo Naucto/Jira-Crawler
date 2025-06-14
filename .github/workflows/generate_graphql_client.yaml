@@ -3,6 +3,8 @@ on: [workflow_dispatch]
 jobs:
   generate_graphql_client:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -30,8 +32,6 @@ jobs:
 
       - name: Push generated GraphQL client to repository
         uses: actions-js/push@master
-        permissions:
-          contents: read
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           author_name: "Naucto GraphQL Client Generator"
