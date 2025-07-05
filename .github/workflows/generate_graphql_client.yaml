@@ -30,6 +30,12 @@ jobs:
 
           cp -r "$GITHUB_GRAPHQL_CLIENT/graphql_client" .
 
+      - name: Patch generated GraphQL client
+        run: |
+          for file in .github/workflows/graphql_client_patches/*.patch; do
+            git apply "$file"
+          done
+
       - name: Push generated GraphQL client to repository
         uses: actions-js/push@master
         with:

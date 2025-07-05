@@ -1,0 +1,44 @@
+From 3825b881c0e2643c5aee8190ebdf9c069c74b3ba Mon Sep 17 00:00:00 2001
+From: Alexis Belmonte <alexbelm48@gmail.com>
+Date: Sat, 5 Jul 2025 14:49:57 +0200
+Subject: [PATCH] [CLIENT] [UPDATE] Comment erroneous QueryGraphQLField
+ type
+
+---
+ graphql_client/custom_fields.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/graphql_client/custom_fields.py b/graphql_client/custom_fields.py
+index 6b6dce4..c3ebcd8 100644
+--- a/graphql_client/custom_fields.py
++++ b/graphql_client/custom_fields.py
+@@ -695,7 +695,7 @@ from .custom_typing_fields import (
+     PushAllowanceEdgeGraphQLField,
+     PushAllowanceGraphQLField,
+     PushGraphQLField,
+-    QueryGraphQLField,
++    # QueryGraphQLField,
+     RateLimitGraphQLField,
+     ReactableGraphQLField,
+     ReactingUserConnectionGraphQLField,
+@@ -28310,7 +28310,7 @@ class QueryFields(GraphQLField):
+             "enterprise_member_invitation_by_token", arguments=cleared_arguments
+         )
+ 
+-    id: "QueryGraphQLField" = QueryGraphQLField("id")
++    # id: "QueryGraphQLField" = QueryGraphQLField("id")
+ 
+     @classmethod
+     def license(cls, key: str) -> "LicenseFields":
+@@ -28667,7 +28667,7 @@ class QueryFields(GraphQLField):
+     def fields(
+         self,
+         *subfields: Union[
+-            QueryGraphQLField,
++            # QueryGraphQLField,
+             "CodeOfConductFields",
+             "EnterpriseAdministratorInvitationFields",
+             "EnterpriseFields",
+-- 
+2.49.0
+
