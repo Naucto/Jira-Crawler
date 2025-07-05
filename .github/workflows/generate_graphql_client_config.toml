@@ -1,3 +1,4 @@
 [tool.ariadne-codegen]
 schema_path = "schema.graphql"
 enable_custom_operations = true
+convert_to_snake_case = false
