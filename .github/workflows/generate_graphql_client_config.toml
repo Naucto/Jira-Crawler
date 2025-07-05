@@ -1,3 +1,4 @@
 [tool.ariadne-codegen]
 schema_path = "schema.graphql"
 enable_custom_operations = true
+async_client = false
