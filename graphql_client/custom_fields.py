@@ -695,7 +695,7 @@ from .custom_typing_fields import (
     PushAllowanceEdgeGraphQLField,
     PushAllowanceGraphQLField,
     PushGraphQLField,
-    QueryGraphQLField,
+    # QueryGraphQLField,
     RateLimitGraphQLField,
     ReactableGraphQLField,
     ReactingUserConnectionGraphQLField,
@@ -28310,7 +28310,7 @@ class QueryFields(GraphQLField):
             "enterprise_member_invitation_by_token", arguments=cleared_arguments
         )
 
-    id: "QueryGraphQLField" = QueryGraphQLField("id")
+    # id: "QueryGraphQLField" = QueryGraphQLField("id")
 
     @classmethod
     def license(cls, key: str) -> "LicenseFields":
@@ -28667,7 +28667,7 @@ class QueryFields(GraphQLField):
     def fields(
         self,
         *subfields: Union[
-            QueryGraphQLField,
+            # QueryGraphQLField,
             "CodeOfConductFields",
             "EnterpriseAdministratorInvitationFields",
             "EnterpriseFields",
