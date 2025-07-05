@@ -138,202 +138,208 @@ from .enums import (
 
 
 class AbortQueuedMigrationsInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    ownerId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    owner_id: str = Field(alias="ownerId")
 
 
 class AbortRepositoryMigrationInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    migrationId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    migration_id: str = Field(alias="migrationId")
 
 
 class AcceptEnterpriseAdministratorInvitationInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    invitationId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    invitation_id: str = Field(alias="invitationId")
 
 
 class AcceptEnterpriseMemberInvitationInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    invitationId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    invitation_id: str = Field(alias="invitationId")
 
 
 class AcceptTopicSuggestionInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     name: Optional[str] = None
-    repositoryId: Optional[str] = None
+    repository_id: Optional[str] = Field(alias="repositoryId", default=None)
 
 
 class AccessUserNamespaceRepositoryInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    repositoryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    repository_id: str = Field(alias="repositoryId")
 
 
 class AddAssigneesToAssignableInput(BaseModel):
-    assignableId: str
-    assigneeIds: List[str]
-    clientMutationId: Optional[str] = None
+    assignable_id: str = Field(alias="assignableId")
+    assignee_ids: List[str] = Field(alias="assigneeIds")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
 
 
 class AddCommentInput(BaseModel):
     body: str
-    clientMutationId: Optional[str] = None
-    subjectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    subject_id: str = Field(alias="subjectId")
 
 
 class AddDiscussionCommentInput(BaseModel):
     body: str
-    clientMutationId: Optional[str] = None
-    discussionId: str
-    replyToId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    discussion_id: str = Field(alias="discussionId")
+    reply_to_id: Optional[str] = Field(alias="replyToId", default=None)
 
 
 class AddDiscussionPollVoteInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    pollOptionId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    poll_option_id: str = Field(alias="pollOptionId")
 
 
 class AddEnterpriseOrganizationMemberInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    organizationId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    organization_id: str = Field(alias="organizationId")
     role: Optional[OrganizationMemberRole] = None
-    userIds: List[str]
+    user_ids: List[str] = Field(alias="userIds")
 
 
 class AddEnterpriseSupportEntitlementInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
     login: str
 
 
 class AddLabelsToLabelableInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    labelIds: List[str]
-    labelableId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    label_ids: List[str] = Field(alias="labelIds")
+    labelable_id: str = Field(alias="labelableId")
 
 
 class AddProjectCardInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    contentId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    content_id: Optional[str] = Field(alias="contentId", default=None)
     note: Optional[str] = None
-    projectColumnId: str
+    project_column_id: str = Field(alias="projectColumnId")
 
 
 class AddProjectColumnInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     name: str
-    projectId: str
+    project_id: str = Field(alias="projectId")
 
 
 class AddProjectV2DraftIssueInput(BaseModel):
-    assigneeIds: Optional[List[str]] = None
+    assignee_ids: Optional[List[str]] = Field(alias="assigneeIds", default=None)
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    projectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    project_id: str = Field(alias="projectId")
     title: str
 
 
 class AddProjectV2ItemByIdInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    contentId: str
-    projectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    content_id: str = Field(alias="contentId")
+    project_id: str = Field(alias="projectId")
 
 
 class AddPullRequestReviewCommentInput(BaseModel):
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    commitOID: Optional[Any] = None
-    inReplyTo: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    commit_oid: Optional[Any] = Field(alias="commitOID", default=None)
+    in_reply_to: Optional[str] = Field(alias="inReplyTo", default=None)
     path: Optional[str] = None
     position: Optional[int] = None
-    pullRequestId: Optional[str] = None
-    pullRequestReviewId: Optional[str] = None
+    pull_request_id: Optional[str] = Field(alias="pullRequestId", default=None)
+    pull_request_review_id: Optional[str] = Field(
+        alias="pullRequestReviewId", default=None
+    )
 
 
 class AddPullRequestReviewInput(BaseModel):
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     comments: Optional[List[Optional["DraftPullRequestReviewComment"]]] = None
-    commitOID: Optional[Any] = None
+    commit_oid: Optional[Any] = Field(alias="commitOID", default=None)
     event: Optional[PullRequestReviewEvent] = None
-    pullRequestId: str
+    pull_request_id: str = Field(alias="pullRequestId")
     threads: Optional[List[Optional["DraftPullRequestReviewThread"]]] = None
 
 
 class AddPullRequestReviewThreadInput(BaseModel):
     body: str
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     line: Optional[int] = None
     path: Optional[str] = None
-    pullRequestId: Optional[str] = None
-    pullRequestReviewId: Optional[str] = None
+    pull_request_id: Optional[str] = Field(alias="pullRequestId", default=None)
+    pull_request_review_id: Optional[str] = Field(
+        alias="pullRequestReviewId", default=None
+    )
     side: Optional[DiffSide] = DiffSide.RIGHT
-    startLine: Optional[int] = None
-    startSide: Optional[DiffSide] = DiffSide.RIGHT
-    subjectType: Optional[PullRequestReviewThreadSubjectType] = (
-        PullRequestReviewThreadSubjectType.LINE
+    start_line: Optional[int] = Field(alias="startLine", default=None)
+    start_side: Optional[DiffSide] = Field(alias="startSide", default=DiffSide.RIGHT)
+    subject_type: Optional[PullRequestReviewThreadSubjectType] = Field(
+        alias="subjectType", default=PullRequestReviewThreadSubjectType.LINE
     )
 
 
 class AddPullRequestReviewThreadReplyInput(BaseModel):
     body: str
-    clientMutationId: Optional[str] = None
-    pullRequestReviewId: Optional[str] = None
-    pullRequestReviewThreadId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    pull_request_review_id: Optional[str] = Field(
+        alias="pullRequestReviewId", default=None
+    )
+    pull_request_review_thread_id: str = Field(alias="pullRequestReviewThreadId")
 
 
 class AddReactionInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     content: ReactionContent
-    subjectId: str
+    subject_id: str = Field(alias="subjectId")
 
 
 class AddStarInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    starrableId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    starrable_id: str = Field(alias="starrableId")
 
 
 class AddSubIssueInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    issueId: str
-    replaceParent: Optional[bool] = None
-    subIssueId: Optional[str] = None
-    subIssueUrl: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    issue_id: str = Field(alias="issueId")
+    replace_parent: Optional[bool] = Field(alias="replaceParent", default=None)
+    sub_issue_id: Optional[str] = Field(alias="subIssueId", default=None)
+    sub_issue_url: Optional[str] = Field(alias="subIssueUrl", default=None)
 
 
 class AddUpvoteInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    subjectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    subject_id: str = Field(alias="subjectId")
 
 
 class AddVerifiableDomainInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     domain: Any
-    ownerId: str
+    owner_id: str = Field(alias="ownerId")
 
 
 class ApproveDeploymentsInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     comment: Optional[str] = ""
-    environmentIds: List[str]
-    workflowRunId: str
+    environment_ids: List[str] = Field(alias="environmentIds")
+    workflow_run_id: str = Field(alias="workflowRunId")
 
 
 class ApproveVerifiableDomainInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class ArchiveProjectV2ItemInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    itemId: str
-    projectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    item_id: str = Field(alias="itemId")
+    project_id: str = Field(alias="projectId")
 
 
 class ArchiveRepositoryInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    repositoryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    repository_id: str = Field(alias="repositoryId")
 
 
 class AuditLogOrder(BaseModel):
@@ -350,51 +356,53 @@ class BranchNamePatternParametersInput(BaseModel):
 
 class BulkSponsorship(BaseModel):
     amount: int
-    sponsorableId: Optional[str] = None
-    sponsorableLogin: Optional[str] = None
+    sponsorable_id: Optional[str] = Field(alias="sponsorableId", default=None)
+    sponsorable_login: Optional[str] = Field(alias="sponsorableLogin", default=None)
 
 
 class CancelEnterpriseAdminInvitationInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    invitationId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    invitation_id: str = Field(alias="invitationId")
 
 
 class CancelEnterpriseMemberInvitationInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    invitationId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    invitation_id: str = Field(alias="invitationId")
 
 
 class CancelSponsorshipInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    sponsorId: Optional[str] = None
-    sponsorLogin: Optional[str] = None
-    sponsorableId: Optional[str] = None
-    sponsorableLogin: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    sponsor_id: Optional[str] = Field(alias="sponsorId", default=None)
+    sponsor_login: Optional[str] = Field(alias="sponsorLogin", default=None)
+    sponsorable_id: Optional[str] = Field(alias="sponsorableId", default=None)
+    sponsorable_login: Optional[str] = Field(alias="sponsorableLogin", default=None)
 
 
 class ChangeUserStatusInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     emoji: Optional[str] = None
-    expiresAt: Optional[Any] = None
-    limitedAvailability: Optional[bool] = False
+    expires_at: Optional[Any] = Field(alias="expiresAt", default=None)
+    limited_availability: Optional[bool] = Field(
+        alias="limitedAvailability", default=False
+    )
     message: Optional[str] = None
-    organizationId: Optional[str] = None
+    organization_id: Optional[str] = Field(alias="organizationId", default=None)
 
 
 class CheckAnnotationData(BaseModel):
-    annotationLevel: CheckAnnotationLevel
+    annotation_level: CheckAnnotationLevel = Field(alias="annotationLevel")
     location: "CheckAnnotationRange"
     message: str
     path: str
-    rawDetails: Optional[str] = None
+    raw_details: Optional[str] = Field(alias="rawDetails", default=None)
     title: Optional[str] = None
 
 
 class CheckAnnotationRange(BaseModel):
-    endColumn: Optional[int] = None
-    endLine: int
-    startColumn: Optional[int] = None
-    startLine: int
+    end_column: Optional[int] = Field(alias="endColumn", default=None)
+    end_line: int = Field(alias="endLine")
+    start_column: Optional[int] = Field(alias="startColumn", default=None)
+    start_line: int = Field(alias="startLine")
 
 
 class CheckRunAction(BaseModel):
@@ -404,9 +412,9 @@ class CheckRunAction(BaseModel):
 
 
 class CheckRunFilter(BaseModel):
-    appId: Optional[int] = None
-    checkName: Optional[str] = None
-    checkType: Optional[CheckRunType] = None
+    app_id: Optional[int] = Field(alias="appId", default=None)
+    check_name: Optional[str] = Field(alias="checkName", default=None)
+    check_type: Optional[CheckRunType] = Field(alias="checkType", default=None)
     conclusions: Optional[List[CheckConclusionState]] = None
     status: Optional[CheckStatusState] = None
     statuses: Optional[List[CheckStatusState]] = None
@@ -423,76 +431,82 @@ class CheckRunOutput(BaseModel):
 class CheckRunOutputImage(BaseModel):
     alt: str
     caption: Optional[str] = None
-    imageUrl: Any
+    image_url: Any = Field(alias="imageUrl")
 
 
 class CheckSuiteAutoTriggerPreference(BaseModel):
-    appId: str
+    app_id: str = Field(alias="appId")
     setting: bool
 
 
 class CheckSuiteFilter(BaseModel):
-    appId: Optional[int] = None
-    checkName: Optional[str] = None
+    app_id: Optional[int] = Field(alias="appId", default=None)
+    check_name: Optional[str] = Field(alias="checkName", default=None)
 
 
 class ClearLabelsFromLabelableInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    labelableId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    labelable_id: str = Field(alias="labelableId")
 
 
 class ClearProjectV2ItemFieldValueInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    fieldId: str
-    itemId: str
-    projectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    field_id: str = Field(alias="fieldId")
+    item_id: str = Field(alias="itemId")
+    project_id: str = Field(alias="projectId")
 
 
 class CloneProjectInput(BaseModel):
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    includeWorkflows: bool
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    include_workflows: bool = Field(alias="includeWorkflows")
     name: str
     public: Optional[bool] = None
-    sourceId: str
-    targetOwnerId: str
+    source_id: str = Field(alias="sourceId")
+    target_owner_id: str = Field(alias="targetOwnerId")
 
 
 class CloneTemplateRepositoryInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     description: Optional[str] = None
-    includeAllBranches: Optional[bool] = False
+    include_all_branches: Optional[bool] = Field(
+        alias="includeAllBranches", default=False
+    )
     name: str
-    ownerId: str
-    repositoryId: str
+    owner_id: str = Field(alias="ownerId")
+    repository_id: str = Field(alias="repositoryId")
     visibility: RepositoryVisibility
 
 
 class CloseDiscussionInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    discussionId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    discussion_id: str = Field(alias="discussionId")
     reason: Optional[DiscussionCloseReason] = DiscussionCloseReason.RESOLVED
 
 
 class CloseIssueInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    duplicateIssueId: Optional[str] = None
-    issueId: str
-    stateReason: Optional[IssueClosedStateReason] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    duplicate_issue_id: Optional[str] = Field(alias="duplicateIssueId", default=None)
+    issue_id: str = Field(alias="issueId")
+    state_reason: Optional[IssueClosedStateReason] = Field(
+        alias="stateReason", default=None
+    )
 
 
 class ClosePullRequestInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    pullRequestId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    pull_request_id: str = Field(alias="pullRequestId")
 
 
 class CodeScanningParametersInput(BaseModel):
-    codeScanningTools: List["CodeScanningToolInput"]
+    code_scanning_tools: List["CodeScanningToolInput"] = Field(
+        alias="codeScanningTools"
+    )
 
 
 class CodeScanningToolInput(BaseModel):
-    alertsThreshold: str
-    securityAlertsThreshold: str
+    alerts_threshold: str = Field(alias="alertsThreshold")
+    security_alerts_threshold: str = Field(alias="securityAlertsThreshold")
     tool: str
 
 
@@ -526,9 +540,11 @@ class CommitMessagePatternParametersInput(BaseModel):
 
 
 class CommittableBranch(BaseModel):
-    branchName: Optional[str] = None
+    branch_name: Optional[str] = Field(alias="branchName", default=None)
     id: Optional[str] = None
-    repositoryNameWithOwner: Optional[str] = None
+    repository_name_with_owner: Optional[str] = Field(
+        alias="repositoryNameWithOwner", default=None
+    )
 
 
 class CommitterEmailPatternParametersInput(BaseModel):
@@ -544,493 +560,555 @@ class ContributionOrder(BaseModel):
 
 class ConvertProjectCardNoteToIssueInput(BaseModel):
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    projectCardId: str
-    repositoryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    project_card_id: str = Field(alias="projectCardId")
+    repository_id: str = Field(alias="repositoryId")
     title: Optional[str] = None
 
 
 class ConvertProjectV2DraftIssueItemToIssueInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    itemId: str
-    repositoryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    item_id: str = Field(alias="itemId")
+    repository_id: str = Field(alias="repositoryId")
 
 
 class ConvertPullRequestToDraftInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    pullRequestId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    pull_request_id: str = Field(alias="pullRequestId")
 
 
 class CopyProjectV2Input(BaseModel):
-    clientMutationId: Optional[str] = None
-    includeDraftIssues: Optional[bool] = False
-    ownerId: str
-    projectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    include_draft_issues: Optional[bool] = Field(
+        alias="includeDraftIssues", default=False
+    )
+    owner_id: str = Field(alias="ownerId")
+    project_id: str = Field(alias="projectId")
     title: str
 
 
 class CreateAttributionInvitationInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    ownerId: str
-    sourceId: str
-    targetId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    owner_id: str = Field(alias="ownerId")
+    source_id: str = Field(alias="sourceId")
+    target_id: str = Field(alias="targetId")
 
 
 class CreateBranchProtectionRuleInput(BaseModel):
-    allowsDeletions: Optional[bool] = None
-    allowsForcePushes: Optional[bool] = None
-    blocksCreations: Optional[bool] = None
-    bypassForcePushActorIds: Optional[List[str]] = None
-    bypassPullRequestActorIds: Optional[List[str]] = None
-    clientMutationId: Optional[str] = None
-    dismissesStaleReviews: Optional[bool] = None
-    isAdminEnforced: Optional[bool] = None
-    lockAllowsFetchAndMerge: Optional[bool] = None
-    lockBranch: Optional[bool] = None
+    allows_deletions: Optional[bool] = Field(alias="allowsDeletions", default=None)
+    allows_force_pushes: Optional[bool] = Field(alias="allowsForcePushes", default=None)
+    blocks_creations: Optional[bool] = Field(alias="blocksCreations", default=None)
+    bypass_force_push_actor_ids: Optional[List[str]] = Field(
+        alias="bypassForcePushActorIds", default=None
+    )
+    bypass_pull_request_actor_ids: Optional[List[str]] = Field(
+        alias="bypassPullRequestActorIds", default=None
+    )
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    dismisses_stale_reviews: Optional[bool] = Field(
+        alias="dismissesStaleReviews", default=None
+    )
+    is_admin_enforced: Optional[bool] = Field(alias="isAdminEnforced", default=None)
+    lock_allows_fetch_and_merge: Optional[bool] = Field(
+        alias="lockAllowsFetchAndMerge", default=None
+    )
+    lock_branch: Optional[bool] = Field(alias="lockBranch", default=None)
     pattern: str
-    pushActorIds: Optional[List[str]] = None
-    repositoryId: str
-    requireLastPushApproval: Optional[bool] = None
-    requiredApprovingReviewCount: Optional[int] = None
-    requiredDeploymentEnvironments: Optional[List[str]] = None
-    requiredStatusCheckContexts: Optional[List[str]] = None
-    requiredStatusChecks: Optional[List["RequiredStatusCheckInput"]] = None
-    requiresApprovingReviews: Optional[bool] = None
-    requiresCodeOwnerReviews: Optional[bool] = None
-    requiresCommitSignatures: Optional[bool] = None
-    requiresConversationResolution: Optional[bool] = None
-    requiresDeployments: Optional[bool] = None
-    requiresLinearHistory: Optional[bool] = None
-    requiresStatusChecks: Optional[bool] = None
-    requiresStrictStatusChecks: Optional[bool] = None
-    restrictsPushes: Optional[bool] = None
-    restrictsReviewDismissals: Optional[bool] = None
-    reviewDismissalActorIds: Optional[List[str]] = None
+    push_actor_ids: Optional[List[str]] = Field(alias="pushActorIds", default=None)
+    repository_id: str = Field(alias="repositoryId")
+    require_last_push_approval: Optional[bool] = Field(
+        alias="requireLastPushApproval", default=None
+    )
+    required_approving_review_count: Optional[int] = Field(
+        alias="requiredApprovingReviewCount", default=None
+    )
+    required_deployment_environments: Optional[List[str]] = Field(
+        alias="requiredDeploymentEnvironments", default=None
+    )
+    required_status_check_contexts: Optional[List[str]] = Field(
+        alias="requiredStatusCheckContexts", default=None
+    )
+    required_status_checks: Optional[List["RequiredStatusCheckInput"]] = Field(
+        alias="requiredStatusChecks", default=None
+    )
+    requires_approving_reviews: Optional[bool] = Field(
+        alias="requiresApprovingReviews", default=None
+    )
+    requires_code_owner_reviews: Optional[bool] = Field(
+        alias="requiresCodeOwnerReviews", default=None
+    )
+    requires_commit_signatures: Optional[bool] = Field(
+        alias="requiresCommitSignatures", default=None
+    )
+    requires_conversation_resolution: Optional[bool] = Field(
+        alias="requiresConversationResolution", default=None
+    )
+    requires_deployments: Optional[bool] = Field(
+        alias="requiresDeployments", default=None
+    )
+    requires_linear_history: Optional[bool] = Field(
+        alias="requiresLinearHistory", default=None
+    )
+    requires_status_checks: Optional[bool] = Field(
+        alias="requiresStatusChecks", default=None
+    )
+    requires_strict_status_checks: Optional[bool] = Field(
+        alias="requiresStrictStatusChecks", default=None
+    )
+    restricts_pushes: Optional[bool] = Field(alias="restrictsPushes", default=None)
+    restricts_review_dismissals: Optional[bool] = Field(
+        alias="restrictsReviewDismissals", default=None
+    )
+    review_dismissal_actor_ids: Optional[List[str]] = Field(
+        alias="reviewDismissalActorIds", default=None
+    )
 
 
 class CreateCheckRunInput(BaseModel):
     actions: Optional[List["CheckRunAction"]] = None
-    clientMutationId: Optional[str] = None
-    completedAt: Optional[Any] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    completed_at: Optional[Any] = Field(alias="completedAt", default=None)
     conclusion: Optional[CheckConclusionState] = None
-    detailsUrl: Optional[Any] = None
-    externalId: Optional[str] = None
-    headSha: Any
+    details_url: Optional[Any] = Field(alias="detailsUrl", default=None)
+    external_id: Optional[str] = Field(alias="externalId", default=None)
+    head_sha: Any = Field(alias="headSha")
     name: str
     output: Optional["CheckRunOutput"] = None
-    repositoryId: str
-    startedAt: Optional[Any] = None
+    repository_id: str = Field(alias="repositoryId")
+    started_at: Optional[Any] = Field(alias="startedAt", default=None)
     status: Optional[RequestableCheckStatusState] = None
 
 
 class CreateCheckSuiteInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    headSha: Any
-    repositoryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    head_sha: Any = Field(alias="headSha")
+    repository_id: str = Field(alias="repositoryId")
 
 
 class CreateCommitOnBranchInput(BaseModel):
     branch: "CommittableBranch"
-    clientMutationId: Optional[str] = None
-    expectedHeadOid: Any
-    fileChanges: Optional["FileChanges"] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    expected_head_oid: Any = Field(alias="expectedHeadOid")
+    file_changes: Optional["FileChanges"] = Field(alias="fileChanges", default=None)
     message: "CommitMessage"
 
 
 class CreateDeploymentInput(BaseModel):
-    autoMerge: Optional[bool] = True
-    clientMutationId: Optional[str] = None
+    auto_merge: Optional[bool] = Field(alias="autoMerge", default=True)
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     description: Optional[str] = ""
     environment: Optional[str] = "production"
     payload: Optional[str] = "{}"
-    refId: str
-    repositoryId: str
-    requiredContexts: Optional[List[str]] = None
+    ref_id: str = Field(alias="refId")
+    repository_id: str = Field(alias="repositoryId")
+    required_contexts: Optional[List[str]] = Field(
+        alias="requiredContexts", default=None
+    )
     task: Optional[str] = "deploy"
 
 
 class CreateDeploymentStatusInput(BaseModel):
-    autoInactive: Optional[bool] = True
-    clientMutationId: Optional[str] = None
-    deploymentId: str
+    auto_inactive: Optional[bool] = Field(alias="autoInactive", default=True)
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    deployment_id: str = Field(alias="deploymentId")
     description: Optional[str] = ""
     environment: Optional[str] = None
-    environmentUrl: Optional[str] = ""
-    logUrl: Optional[str] = ""
+    environment_url: Optional[str] = Field(alias="environmentUrl", default="")
+    log_url: Optional[str] = Field(alias="logUrl", default="")
     state: DeploymentStatusState
 
 
 class CreateDiscussionInput(BaseModel):
     body: str
-    categoryId: str
-    clientMutationId: Optional[str] = None
-    repositoryId: str
+    category_id: str = Field(alias="categoryId")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    repository_id: str = Field(alias="repositoryId")
     title: str
 
 
 class CreateEnterpriseOrganizationInput(BaseModel):
-    adminLogins: List[str]
-    billingEmail: str
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
+    admin_logins: List[str] = Field(alias="adminLogins")
+    billing_email: str = Field(alias="billingEmail")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
     login: str
-    profileName: str
+    profile_name: str = Field(alias="profileName")
 
 
 class CreateEnvironmentInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     name: str
-    repositoryId: str
+    repository_id: str = Field(alias="repositoryId")
 
 
 class CreateIpAllowListEntryInput(BaseModel):
-    allowListValue: str
-    clientMutationId: Optional[str] = None
-    isActive: bool
+    allow_list_value: str = Field(alias="allowListValue")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    is_active: bool = Field(alias="isActive")
     name: Optional[str] = None
-    ownerId: str
+    owner_id: str = Field(alias="ownerId")
 
 
 class CreateIssueInput(BaseModel):
-    assigneeIds: Optional[List[str]] = None
+    assignee_ids: Optional[List[str]] = Field(alias="assigneeIds", default=None)
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    issueTemplate: Optional[str] = None
-    issueTypeId: Optional[str] = None
-    labelIds: Optional[List[str]] = None
-    milestoneId: Optional[str] = None
-    parentIssueId: Optional[str] = None
-    projectIds: Optional[List[str]] = None
-    repositoryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    issue_template: Optional[str] = Field(alias="issueTemplate", default=None)
+    issue_type_id: Optional[str] = Field(alias="issueTypeId", default=None)
+    label_ids: Optional[List[str]] = Field(alias="labelIds", default=None)
+    milestone_id: Optional[str] = Field(alias="milestoneId", default=None)
+    parent_issue_id: Optional[str] = Field(alias="parentIssueId", default=None)
+    project_ids: Optional[List[str]] = Field(alias="projectIds", default=None)
+    repository_id: str = Field(alias="repositoryId")
     title: str
 
 
 class CreateIssueTypeInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     color: Optional[IssueTypeColor] = None
     description: Optional[str] = None
-    isEnabled: bool
+    is_enabled: bool = Field(alias="isEnabled")
     name: str
-    ownerId: str
+    owner_id: str = Field(alias="ownerId")
 
 
 class CreateLabelInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     color: str
     description: Optional[str] = None
     name: str
-    repositoryId: str
+    repository_id: str = Field(alias="repositoryId")
 
 
 class CreateLinkedBranchInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    issueId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    issue_id: str = Field(alias="issueId")
     name: Optional[str] = None
     oid: Any
-    repositoryId: Optional[str] = None
+    repository_id: Optional[str] = Field(alias="repositoryId", default=None)
 
 
 class CreateMigrationSourceInput(BaseModel):
-    accessToken: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    githubPat: Optional[str] = None
+    access_token: Optional[str] = Field(alias="accessToken", default=None)
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    github_pat: Optional[str] = Field(alias="githubPat", default=None)
     name: str
-    ownerId: str
+    owner_id: str = Field(alias="ownerId")
     type: MigrationSourceType
     url: Optional[str] = None
 
 
 class CreateProjectInput(BaseModel):
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     name: str
-    ownerId: str
-    repositoryIds: Optional[List[str]] = None
+    owner_id: str = Field(alias="ownerId")
+    repository_ids: Optional[List[str]] = Field(alias="repositoryIds", default=None)
     template: Optional[ProjectTemplate] = None
 
 
 class CreateProjectV2FieldInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    dataType: ProjectV2CustomFieldType
-    iterationConfiguration: Optional["ProjectV2IterationFieldConfigurationInput"] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    data_type: ProjectV2CustomFieldType = Field(alias="dataType")
+    iteration_configuration: Optional["ProjectV2IterationFieldConfigurationInput"] = (
+        Field(alias="iterationConfiguration", default=None)
+    )
     name: str
-    projectId: str
-    singleSelectOptions: Optional[List["ProjectV2SingleSelectFieldOptionInput"]] = None
+    project_id: str = Field(alias="projectId")
+    single_select_options: Optional[List["ProjectV2SingleSelectFieldOptionInput"]] = (
+        Field(alias="singleSelectOptions", default=None)
+    )
 
 
 class CreateProjectV2Input(BaseModel):
-    clientMutationId: Optional[str] = None
-    ownerId: str
-    repositoryId: Optional[str] = None
-    teamId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    owner_id: str = Field(alias="ownerId")
+    repository_id: Optional[str] = Field(alias="repositoryId", default=None)
+    team_id: Optional[str] = Field(alias="teamId", default=None)
     title: str
 
 
 class CreateProjectV2StatusUpdateInput(BaseModel):
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    projectId: str
-    startDate: Optional[Any] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    project_id: str = Field(alias="projectId")
+    start_date: Optional[Any] = Field(alias="startDate", default=None)
     status: Optional[ProjectV2StatusUpdateStatus] = None
-    targetDate: Optional[Any] = None
+    target_date: Optional[Any] = Field(alias="targetDate", default=None)
 
 
 class CreatePullRequestInput(BaseModel):
-    baseRefName: str
+    base_ref_name: str = Field(alias="baseRefName")
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     draft: Optional[bool] = False
-    headRefName: str
-    headRepositoryId: Optional[str] = None
-    maintainerCanModify: Optional[bool] = True
-    repositoryId: str
+    head_ref_name: str = Field(alias="headRefName")
+    head_repository_id: Optional[str] = Field(alias="headRepositoryId", default=None)
+    maintainer_can_modify: Optional[bool] = Field(
+        alias="maintainerCanModify", default=True
+    )
+    repository_id: str = Field(alias="repositoryId")
     title: str
 
 
 class CreateRefInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     name: str
     oid: Any
-    repositoryId: str
+    repository_id: str = Field(alias="repositoryId")
 
 
 class CreateRepositoryInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     description: Optional[str] = None
-    hasIssuesEnabled: Optional[bool] = True
-    hasWikiEnabled: Optional[bool] = False
-    homepageUrl: Optional[Any] = None
+    has_issues_enabled: Optional[bool] = Field(alias="hasIssuesEnabled", default=True)
+    has_wiki_enabled: Optional[bool] = Field(alias="hasWikiEnabled", default=False)
+    homepage_url: Optional[Any] = Field(alias="homepageUrl", default=None)
     name: str
-    ownerId: Optional[str] = None
-    teamId: Optional[str] = None
+    owner_id: Optional[str] = Field(alias="ownerId", default=None)
+    team_id: Optional[str] = Field(alias="teamId", default=None)
     template: Optional[bool] = False
     visibility: RepositoryVisibility
 
 
 class CreateRepositoryRulesetInput(BaseModel):
-    bypassActors: Optional[List["RepositoryRulesetBypassActorInput"]] = None
-    clientMutationId: Optional[str] = None
+    bypass_actors: Optional[List["RepositoryRulesetBypassActorInput"]] = Field(
+        alias="bypassActors", default=None
+    )
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     conditions: "RepositoryRuleConditionsInput"
     enforcement: RuleEnforcement
     name: str
     rules: Optional[List["RepositoryRuleInput"]] = None
-    sourceId: str
+    source_id: str = Field(alias="sourceId")
     target: Optional[RepositoryRulesetTarget] = None
 
 
 class CreateSponsorsListingInput(BaseModel):
-    billingCountryOrRegionCode: Optional[SponsorsCountryOrRegionCode] = None
-    clientMutationId: Optional[str] = None
-    contactEmail: Optional[str] = None
-    fiscalHostLogin: Optional[str] = None
-    fiscallyHostedProjectProfileUrl: Optional[str] = None
-    fullDescription: Optional[str] = None
-    residenceCountryOrRegionCode: Optional[SponsorsCountryOrRegionCode] = None
-    sponsorableLogin: Optional[str] = None
+    billing_country_or_region_code: Optional[SponsorsCountryOrRegionCode] = Field(
+        alias="billingCountryOrRegionCode", default=None
+    )
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    contact_email: Optional[str] = Field(alias="contactEmail", default=None)
+    fiscal_host_login: Optional[str] = Field(alias="fiscalHostLogin", default=None)
+    fiscally_hosted_project_profile_url: Optional[str] = Field(
+        alias="fiscallyHostedProjectProfileUrl", default=None
+    )
+    full_description: Optional[str] = Field(alias="fullDescription", default=None)
+    residence_country_or_region_code: Optional[SponsorsCountryOrRegionCode] = Field(
+        alias="residenceCountryOrRegionCode", default=None
+    )
+    sponsorable_login: Optional[str] = Field(alias="sponsorableLogin", default=None)
 
 
 class CreateSponsorsTierInput(BaseModel):
     amount: int
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     description: str
-    isRecurring: Optional[bool] = True
+    is_recurring: Optional[bool] = Field(alias="isRecurring", default=True)
     publish: Optional[bool] = False
-    repositoryId: Optional[str] = None
-    repositoryName: Optional[str] = None
-    repositoryOwnerLogin: Optional[str] = None
-    sponsorableId: Optional[str] = None
-    sponsorableLogin: Optional[str] = None
-    welcomeMessage: Optional[str] = None
+    repository_id: Optional[str] = Field(alias="repositoryId", default=None)
+    repository_name: Optional[str] = Field(alias="repositoryName", default=None)
+    repository_owner_login: Optional[str] = Field(
+        alias="repositoryOwnerLogin", default=None
+    )
+    sponsorable_id: Optional[str] = Field(alias="sponsorableId", default=None)
+    sponsorable_login: Optional[str] = Field(alias="sponsorableLogin", default=None)
+    welcome_message: Optional[str] = Field(alias="welcomeMessage", default=None)
 
 
 class CreateSponsorshipInput(BaseModel):
     amount: Optional[int] = None
-    clientMutationId: Optional[str] = None
-    isRecurring: Optional[bool] = None
-    privacyLevel: Optional[SponsorshipPrivacy] = SponsorshipPrivacy.PUBLIC
-    receiveEmails: Optional[bool] = True
-    sponsorId: Optional[str] = None
-    sponsorLogin: Optional[str] = None
-    sponsorableId: Optional[str] = None
-    sponsorableLogin: Optional[str] = None
-    tierId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    is_recurring: Optional[bool] = Field(alias="isRecurring", default=None)
+    privacy_level: Optional[SponsorshipPrivacy] = Field(
+        alias="privacyLevel", default=SponsorshipPrivacy.PUBLIC
+    )
+    receive_emails: Optional[bool] = Field(alias="receiveEmails", default=True)
+    sponsor_id: Optional[str] = Field(alias="sponsorId", default=None)
+    sponsor_login: Optional[str] = Field(alias="sponsorLogin", default=None)
+    sponsorable_id: Optional[str] = Field(alias="sponsorableId", default=None)
+    sponsorable_login: Optional[str] = Field(alias="sponsorableLogin", default=None)
+    tier_id: Optional[str] = Field(alias="tierId", default=None)
 
 
 class CreateSponsorshipsInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    privacyLevel: Optional[SponsorshipPrivacy] = SponsorshipPrivacy.PUBLIC
-    receiveEmails: Optional[bool] = False
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    privacy_level: Optional[SponsorshipPrivacy] = Field(
+        alias="privacyLevel", default=SponsorshipPrivacy.PUBLIC
+    )
+    receive_emails: Optional[bool] = Field(alias="receiveEmails", default=False)
     recurring: Optional[bool] = False
-    sponsorLogin: str
+    sponsor_login: str = Field(alias="sponsorLogin")
     sponsorships: List["BulkSponsorship"]
 
 
 class CreateTeamDiscussionCommentInput(BaseModel):
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    discussionId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    discussion_id: Optional[str] = Field(alias="discussionId", default=None)
 
 
 class CreateTeamDiscussionInput(BaseModel):
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     private: Optional[bool] = None
-    teamId: Optional[str] = None
+    team_id: Optional[str] = Field(alias="teamId", default=None)
     title: Optional[str] = None
 
 
 class CreateUserListInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     description: Optional[str] = None
-    isPrivate: Optional[bool] = False
+    is_private: Optional[bool] = Field(alias="isPrivate", default=False)
     name: str
 
 
 class DeclineTopicSuggestionInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     name: Optional[str] = None
     reason: Optional[TopicSuggestionDeclineReason] = None
-    repositoryId: Optional[str] = None
+    repository_id: Optional[str] = Field(alias="repositoryId", default=None)
 
 
 class DeleteBranchProtectionRuleInput(BaseModel):
-    branchProtectionRuleId: str
-    clientMutationId: Optional[str] = None
+    branch_protection_rule_id: str = Field(alias="branchProtectionRuleId")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
 
 
 class DeleteDeploymentInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class DeleteDiscussionCommentInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class DeleteDiscussionInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class DeleteEnvironmentInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class DeleteIpAllowListEntryInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    ipAllowListEntryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    ip_allow_list_entry_id: str = Field(alias="ipAllowListEntryId")
 
 
 class DeleteIssueCommentInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class DeleteIssueInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    issueId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    issue_id: str = Field(alias="issueId")
 
 
 class DeleteIssueTypeInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    issueTypeId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    issue_type_id: str = Field(alias="issueTypeId")
 
 
 class DeleteLabelInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class DeleteLinkedBranchInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    linkedBranchId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    linked_branch_id: str = Field(alias="linkedBranchId")
 
 
 class DeletePackageVersionInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    packageVersionId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    package_version_id: str = Field(alias="packageVersionId")
 
 
 class DeleteProjectCardInput(BaseModel):
-    cardId: str
-    clientMutationId: Optional[str] = None
+    card_id: str = Field(alias="cardId")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
 
 
 class DeleteProjectColumnInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    columnId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    column_id: str = Field(alias="columnId")
 
 
 class DeleteProjectInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    projectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    project_id: str = Field(alias="projectId")
 
 
 class DeleteProjectV2FieldInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    fieldId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    field_id: str = Field(alias="fieldId")
 
 
 class DeleteProjectV2Input(BaseModel):
-    clientMutationId: Optional[str] = None
-    projectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    project_id: str = Field(alias="projectId")
 
 
 class DeleteProjectV2ItemInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    itemId: str
-    projectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    item_id: str = Field(alias="itemId")
+    project_id: str = Field(alias="projectId")
 
 
 class DeleteProjectV2StatusUpdateInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    statusUpdateId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    status_update_id: str = Field(alias="statusUpdateId")
 
 
 class DeleteProjectV2WorkflowInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    workflowId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    workflow_id: str = Field(alias="workflowId")
 
 
 class DeletePullRequestReviewCommentInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class DeletePullRequestReviewInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    pullRequestReviewId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    pull_request_review_id: str = Field(alias="pullRequestReviewId")
 
 
 class DeleteRefInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    refId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    ref_id: str = Field(alias="refId")
 
 
 class DeleteRepositoryRulesetInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    repositoryRulesetId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    repository_ruleset_id: str = Field(alias="repositoryRulesetId")
 
 
 class DeleteTeamDiscussionCommentInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class DeleteTeamDiscussionInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class DeleteUserListInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    listId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    list_id: str = Field(alias="listId")
 
 
 class DeleteVerifiableDomainInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
@@ -1040,13 +1118,13 @@ class DeploymentOrder(BaseModel):
 
 
 class DequeuePullRequestInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class DisablePullRequestAutoMergeInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    pullRequestId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    pull_request_id: str = Field(alias="pullRequestId")
 
 
 class DiscussionOrder(BaseModel):
@@ -1060,15 +1138,17 @@ class DiscussionPollOptionOrder(BaseModel):
 
 
 class DismissPullRequestReviewInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     message: str
-    pullRequestReviewId: str
+    pull_request_review_id: str = Field(alias="pullRequestReviewId")
 
 
 class DismissRepositoryVulnerabilityAlertInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    dismissReason: DismissReason
-    repositoryVulnerabilityAlertId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    dismiss_reason: DismissReason = Field(alias="dismissReason")
+    repository_vulnerability_alert_id: str = Field(
+        alias="repositoryVulnerabilityAlertId"
+    )
 
 
 class DraftPullRequestReviewComment(BaseModel):
@@ -1082,25 +1162,27 @@ class DraftPullRequestReviewThread(BaseModel):
     line: Optional[int] = None
     path: Optional[str] = None
     side: Optional[DiffSide] = DiffSide.RIGHT
-    startLine: Optional[int] = None
-    startSide: Optional[DiffSide] = DiffSide.RIGHT
+    start_line: Optional[int] = Field(alias="startLine", default=None)
+    start_side: Optional[DiffSide] = Field(alias="startSide", default=DiffSide.RIGHT)
 
 
 class EnablePullRequestAutoMergeInput(BaseModel):
-    authorEmail: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    commitBody: Optional[str] = None
-    commitHeadline: Optional[str] = None
-    expectedHeadOid: Optional[Any] = None
-    mergeMethod: Optional[PullRequestMergeMethod] = PullRequestMergeMethod.MERGE
-    pullRequestId: str
+    author_email: Optional[str] = Field(alias="authorEmail", default=None)
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    commit_body: Optional[str] = Field(alias="commitBody", default=None)
+    commit_headline: Optional[str] = Field(alias="commitHeadline", default=None)
+    expected_head_oid: Optional[Any] = Field(alias="expectedHeadOid", default=None)
+    merge_method: Optional[PullRequestMergeMethod] = Field(
+        alias="mergeMethod", default=PullRequestMergeMethod.MERGE
+    )
+    pull_request_id: str = Field(alias="pullRequestId")
 
 
 class EnqueuePullRequestInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    expectedHeadOid: Optional[Any] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    expected_head_oid: Optional[Any] = Field(alias="expectedHeadOid", default=None)
     jump: Optional[bool] = None
-    pullRequestId: str
+    pull_request_id: str = Field(alias="pullRequestId")
 
 
 class EnterpriseAdministratorInvitationOrder(BaseModel):
@@ -1163,21 +1245,21 @@ class FileDeletion(BaseModel):
 
 
 class FileExtensionRestrictionParametersInput(BaseModel):
-    restrictedFileExtensions: List[str]
+    restricted_file_extensions: List[str] = Field(alias="restrictedFileExtensions")
 
 
 class FilePathRestrictionParametersInput(BaseModel):
-    restrictedFilePaths: List[str]
+    restricted_file_paths: List[str] = Field(alias="restrictedFilePaths")
 
 
 class FollowOrganizationInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    organizationId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    organization_id: str = Field(alias="organizationId")
 
 
 class FollowUserInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    userId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    user_id: str = Field(alias="userId")
 
 
 class GistOrder(BaseModel):
@@ -1186,39 +1268,39 @@ class GistOrder(BaseModel):
 
 
 class GrantEnterpriseOrganizationsMigratorRoleInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
     login: str
 
 
 class GrantMigratorRoleInput(BaseModel):
     actor: str
-    actorType: ActorType
-    clientMutationId: Optional[str] = None
-    organizationId: str
+    actor_type: ActorType = Field(alias="actorType")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    organization_id: str = Field(alias="organizationId")
 
 
 class ImportProjectInput(BaseModel):
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    columnImports: List["ProjectColumnImport"]
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    column_imports: List["ProjectColumnImport"] = Field(alias="columnImports")
     name: str
-    ownerName: str
+    owner_name: str = Field(alias="ownerName")
     public: Optional[bool] = False
 
 
 class InviteEnterpriseAdminInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     email: Optional[str] = None
-    enterpriseId: str
+    enterprise_id: str = Field(alias="enterpriseId")
     invitee: Optional[str] = None
     role: Optional[EnterpriseAdministratorRole] = None
 
 
 class InviteEnterpriseMemberInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     email: Optional[str] = None
-    enterpriseId: str
+    enterprise_id: str = Field(alias="enterpriseId")
     invitee: Optional[str] = None
 
 
@@ -1234,15 +1316,15 @@ class IssueCommentOrder(BaseModel):
 
 class IssueFilters(BaseModel):
     assignee: Optional[str] = None
-    createdBy: Optional[str] = None
+    created_by: Optional[str] = Field(alias="createdBy", default=None)
     labels: Optional[List[str]] = None
     mentioned: Optional[str] = None
     milestone: Optional[str] = None
-    milestoneNumber: Optional[str] = None
+    milestone_number: Optional[str] = Field(alias="milestoneNumber", default=None)
     since: Optional[Any] = None
     states: Optional[List[IssueState]] = None
     type: Optional[str] = None
-    viewerSubscribed: Optional[bool] = False
+    viewer_subscribed: Optional[bool] = Field(alias="viewerSubscribed", default=False)
 
 
 class IssueOrder(BaseModel):
@@ -1266,27 +1348,27 @@ class LanguageOrder(BaseModel):
 
 
 class LinkProjectV2ToRepositoryInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    projectId: str
-    repositoryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    project_id: str = Field(alias="projectId")
+    repository_id: str = Field(alias="repositoryId")
 
 
 class LinkProjectV2ToTeamInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    projectId: str
-    teamId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    project_id: str = Field(alias="projectId")
+    team_id: str = Field(alias="teamId")
 
 
 class LinkRepositoryToProjectInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    projectId: str
-    repositoryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    project_id: str = Field(alias="projectId")
+    repository_id: str = Field(alias="repositoryId")
 
 
 class LockLockableInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    lockReason: Optional[LockReason] = None
-    lockableId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    lock_reason: Optional[LockReason] = Field(alias="lockReason", default=None)
+    lockable_id: str = Field(alias="lockableId")
 
 
 class MannequinOrder(BaseModel):
@@ -1295,61 +1377,63 @@ class MannequinOrder(BaseModel):
 
 
 class MarkDiscussionCommentAsAnswerInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class MarkFileAsViewedInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     path: str
-    pullRequestId: str
+    pull_request_id: str = Field(alias="pullRequestId")
 
 
 class MarkProjectV2AsTemplateInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    projectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    project_id: str = Field(alias="projectId")
 
 
 class MarkPullRequestReadyForReviewInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    pullRequestId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    pull_request_id: str = Field(alias="pullRequestId")
 
 
 class MaxFilePathLengthParametersInput(BaseModel):
-    maxFilePathLength: int
+    max_file_path_length: int = Field(alias="maxFilePathLength")
 
 
 class MaxFileSizeParametersInput(BaseModel):
-    maxFileSize: int
+    max_file_size: int = Field(alias="maxFileSize")
 
 
 class MergeBranchInput(BaseModel):
-    authorEmail: Optional[str] = None
+    author_email: Optional[str] = Field(alias="authorEmail", default=None)
     base: str
-    clientMutationId: Optional[str] = None
-    commitMessage: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    commit_message: Optional[str] = Field(alias="commitMessage", default=None)
     head: str
-    repositoryId: str
+    repository_id: str = Field(alias="repositoryId")
 
 
 class MergePullRequestInput(BaseModel):
-    authorEmail: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    commitBody: Optional[str] = None
-    commitHeadline: Optional[str] = None
-    expectedHeadOid: Optional[Any] = None
-    mergeMethod: Optional[PullRequestMergeMethod] = PullRequestMergeMethod.MERGE
-    pullRequestId: str
+    author_email: Optional[str] = Field(alias="authorEmail", default=None)
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    commit_body: Optional[str] = Field(alias="commitBody", default=None)
+    commit_headline: Optional[str] = Field(alias="commitHeadline", default=None)
+    expected_head_oid: Optional[Any] = Field(alias="expectedHeadOid", default=None)
+    merge_method: Optional[PullRequestMergeMethod] = Field(
+        alias="mergeMethod", default=PullRequestMergeMethod.MERGE
+    )
+    pull_request_id: str = Field(alias="pullRequestId")
 
 
 class MergeQueueParametersInput(BaseModel):
-    checkResponseTimeoutMinutes: int
-    groupingStrategy: MergeQueueGroupingStrategy
-    maxEntriesToBuild: int
-    maxEntriesToMerge: int
-    mergeMethod: MergeQueueMergeMethod
-    minEntriesToMerge: int
-    minEntriesToMergeWaitMinutes: int
+    check_response_timeout_minutes: int = Field(alias="checkResponseTimeoutMinutes")
+    grouping_strategy: MergeQueueGroupingStrategy = Field(alias="groupingStrategy")
+    max_entries_to_build: int = Field(alias="maxEntriesToBuild")
+    max_entries_to_merge: int = Field(alias="maxEntriesToMerge")
+    merge_method: MergeQueueMergeMethod = Field(alias="mergeMethod")
+    min_entries_to_merge: int = Field(alias="minEntriesToMerge")
+    min_entries_to_merge_wait_minutes: int = Field(alias="minEntriesToMergeWaitMinutes")
 
 
 class MilestoneOrder(BaseModel):
@@ -1359,21 +1443,21 @@ class MilestoneOrder(BaseModel):
 
 class MinimizeCommentInput(BaseModel):
     classifier: ReportedContentClassifiers
-    clientMutationId: Optional[str] = None
-    subjectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    subject_id: str = Field(alias="subjectId")
 
 
 class MoveProjectCardInput(BaseModel):
-    afterCardId: Optional[str] = None
-    cardId: str
-    clientMutationId: Optional[str] = None
-    columnId: str
+    after_card_id: Optional[str] = Field(alias="afterCardId", default=None)
+    card_id: str = Field(alias="cardId")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    column_id: str = Field(alias="columnId")
 
 
 class MoveProjectColumnInput(BaseModel):
-    afterColumnId: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    columnId: str
+    after_column_id: Optional[str] = Field(alias="afterColumnId", default=None)
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    column_id: str = Field(alias="columnId")
 
 
 class OrgEnterpriseOwnerOrder(BaseModel):
@@ -1402,14 +1486,14 @@ class PackageVersionOrder(BaseModel):
 
 
 class PinEnvironmentInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    environmentId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    environment_id: str = Field(alias="environmentId")
     pinned: bool
 
 
 class PinIssueInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    issueId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    issue_id: str = Field(alias="issueId")
 
 
 class PinnedEnvironmentOrder(BaseModel):
@@ -1423,7 +1507,7 @@ class ProjectCardImport(BaseModel):
 
 
 class ProjectColumnImport(BaseModel):
-    columnName: str
+    column_name: str = Field(alias="columnName")
     issues: Optional[List["ProjectCardImport"]] = None
     position: int
 
@@ -1435,8 +1519,8 @@ class ProjectOrder(BaseModel):
 
 class ProjectV2Collaborator(BaseModel):
     role: ProjectV2Roles
-    teamId: Optional[str] = None
-    userId: Optional[str] = None
+    team_id: Optional[str] = Field(alias="teamId", default=None)
+    user_id: Optional[str] = Field(alias="userId", default=None)
 
 
 class ProjectV2FieldOrder(BaseModel):
@@ -1446,9 +1530,11 @@ class ProjectV2FieldOrder(BaseModel):
 
 class ProjectV2FieldValue(BaseModel):
     date: Optional[Any] = None
-    iterationId: Optional[str] = None
+    iteration_id: Optional[str] = Field(alias="iterationId", default=None)
     number: Optional[float] = None
-    singleSelectOptionId: Optional[str] = None
+    single_select_option_id: Optional[str] = Field(
+        alias="singleSelectOptionId", default=None
+    )
     text: Optional[str] = None
 
 
@@ -1468,14 +1554,14 @@ class ProjectV2ItemOrder(BaseModel):
 
 class ProjectV2Iteration(BaseModel):
     duration: int
-    startDate: Any
+    start_date: Any = Field(alias="startDate")
     title: str
 
 
 class ProjectV2IterationFieldConfigurationInput(BaseModel):
     duration: int
     iterations: List["ProjectV2Iteration"]
-    startDate: Any
+    start_date: Any = Field(alias="startDate")
 
 
 class ProjectV2Order(BaseModel):
@@ -1506,13 +1592,13 @@ class ProjectV2WorkflowOrder(BaseModel):
 
 class PropertyTargetDefinitionInput(BaseModel):
     name: str
-    propertyValues: List[str]
+    property_values: List[str] = Field(alias="propertyValues")
     source: Optional[str] = None
 
 
 class PublishSponsorsTierInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    tierId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    tier_id: str = Field(alias="tierId")
 
 
 class PullRequestOrder(BaseModel):
@@ -1521,13 +1607,19 @@ class PullRequestOrder(BaseModel):
 
 
 class PullRequestParametersInput(BaseModel):
-    allowedMergeMethods: Optional[List[PullRequestAllowedMergeMethods]] = None
-    automaticCopilotCodeReviewEnabled: Optional[bool] = None
-    dismissStaleReviewsOnPush: bool
-    requireCodeOwnerReview: bool
-    requireLastPushApproval: bool
-    requiredApprovingReviewCount: int
-    requiredReviewThreadResolution: bool
+    allowed_merge_methods: Optional[List[PullRequestAllowedMergeMethods]] = Field(
+        alias="allowedMergeMethods", default=None
+    )
+    automatic_copilot_code_review_enabled: Optional[bool] = Field(
+        alias="automaticCopilotCodeReviewEnabled", default=None
+    )
+    dismiss_stale_reviews_on_push: bool = Field(alias="dismissStaleReviewsOnPush")
+    require_code_owner_review: bool = Field(alias="requireCodeOwnerReview")
+    require_last_push_approval: bool = Field(alias="requireLastPushApproval")
+    required_approving_review_count: int = Field(alias="requiredApprovingReviewCount")
+    required_review_thread_resolution: bool = Field(
+        alias="requiredReviewThreadResolution"
+    )
 
 
 class ReactionOrder(BaseModel):
@@ -1546,27 +1638,27 @@ class RefOrder(BaseModel):
 
 
 class RefUpdate(BaseModel):
-    afterOid: Any
-    beforeOid: Optional[Any] = None
+    after_oid: Any = Field(alias="afterOid")
+    before_oid: Optional[Any] = Field(alias="beforeOid", default=None)
     force: Optional[bool] = False
     name: Any
 
 
 class RegenerateEnterpriseIdentityProviderRecoveryCodesInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
 
 
 class RegenerateVerifiableDomainTokenInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class RejectDeploymentsInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     comment: Optional[str] = ""
-    environmentIds: List[str]
-    workflowRunId: str
+    environment_ids: List[str] = Field(alias="environmentIds")
+    workflow_run_id: str = Field(alias="workflowRunId")
 
 
 class ReleaseOrder(BaseModel):
@@ -1575,103 +1667,103 @@ class ReleaseOrder(BaseModel):
 
 
 class RemoveAssigneesFromAssignableInput(BaseModel):
-    assignableId: str
-    assigneeIds: List[str]
-    clientMutationId: Optional[str] = None
+    assignable_id: str = Field(alias="assignableId")
+    assignee_ids: List[str] = Field(alias="assigneeIds")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
 
 
 class RemoveEnterpriseAdminInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
     login: str
 
 
 class RemoveEnterpriseIdentityProviderInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
 
 
 class RemoveEnterpriseMemberInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    userId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    user_id: str = Field(alias="userId")
 
 
 class RemoveEnterpriseOrganizationInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    organizationId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    organization_id: str = Field(alias="organizationId")
 
 
 class RemoveEnterpriseSupportEntitlementInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
     login: str
 
 
 class RemoveLabelsFromLabelableInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    labelIds: List[str]
-    labelableId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    label_ids: List[str] = Field(alias="labelIds")
+    labelable_id: str = Field(alias="labelableId")
 
 
 class RemoveOutsideCollaboratorInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    organizationId: str
-    userId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    organization_id: str = Field(alias="organizationId")
+    user_id: str = Field(alias="userId")
 
 
 class RemoveReactionInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     content: ReactionContent
-    subjectId: str
+    subject_id: str = Field(alias="subjectId")
 
 
 class RemoveStarInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    starrableId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    starrable_id: str = Field(alias="starrableId")
 
 
 class RemoveSubIssueInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    issueId: str
-    subIssueId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    issue_id: str = Field(alias="issueId")
+    sub_issue_id: str = Field(alias="subIssueId")
 
 
 class RemoveUpvoteInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    subjectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    subject_id: str = Field(alias="subjectId")
 
 
 class ReopenDiscussionInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    discussionId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    discussion_id: str = Field(alias="discussionId")
 
 
 class ReopenIssueInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    issueId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    issue_id: str = Field(alias="issueId")
 
 
 class ReopenPullRequestInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    pullRequestId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    pull_request_id: str = Field(alias="pullRequestId")
 
 
 class ReorderEnvironmentInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    environmentId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    environment_id: str = Field(alias="environmentId")
     position: int
 
 
 class ReplaceActorsForAssignableInput(BaseModel):
-    actorIds: List[str]
-    assignableId: str
-    clientMutationId: Optional[str] = None
+    actor_ids: List[str] = Field(alias="actorIds")
+    assignable_id: str = Field(alias="assignableId")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
 
 
 class RepositoryIdConditionTargetInput(BaseModel):
-    repositoryIds: List[str]
+    repository_ids: List[str] = Field(alias="repositoryIds")
 
 
 class RepositoryInvitationOrder(BaseModel):
@@ -1701,10 +1793,18 @@ class RepositoryPropertyConditionTargetInput(BaseModel):
 
 
 class RepositoryRuleConditionsInput(BaseModel):
-    refName: Optional["RefNameConditionTargetInput"] = None
-    repositoryId: Optional["RepositoryIdConditionTargetInput"] = None
-    repositoryName: Optional["RepositoryNameConditionTargetInput"] = None
-    repositoryProperty: Optional["RepositoryPropertyConditionTargetInput"] = None
+    ref_name: Optional["RefNameConditionTargetInput"] = Field(
+        alias="refName", default=None
+    )
+    repository_id: Optional["RepositoryIdConditionTargetInput"] = Field(
+        alias="repositoryId", default=None
+    )
+    repository_name: Optional["RepositoryNameConditionTargetInput"] = Field(
+        alias="repositoryName", default=None
+    )
+    repository_property: Optional["RepositoryPropertyConditionTargetInput"] = Field(
+        alias="repositoryProperty", default=None
+    )
 
 
 class RepositoryRuleInput(BaseModel):
@@ -1719,98 +1819,136 @@ class RepositoryRuleOrder(BaseModel):
 
 
 class RepositoryRulesetBypassActorInput(BaseModel):
-    actorId: Optional[str] = None
-    bypassMode: RepositoryRulesetBypassActorBypassMode
-    deployKey: Optional[bool] = None
-    enterpriseOwner: Optional[bool] = None
-    organizationAdmin: Optional[bool] = None
-    repositoryRoleDatabaseId: Optional[int] = None
+    actor_id: Optional[str] = Field(alias="actorId", default=None)
+    bypass_mode: RepositoryRulesetBypassActorBypassMode = Field(alias="bypassMode")
+    deploy_key: Optional[bool] = Field(alias="deployKey", default=None)
+    enterprise_owner: Optional[bool] = Field(alias="enterpriseOwner", default=None)
+    organization_admin: Optional[bool] = Field(alias="organizationAdmin", default=None)
+    repository_role_database_id: Optional[int] = Field(
+        alias="repositoryRoleDatabaseId", default=None
+    )
 
 
 class ReprioritizeSubIssueInput(BaseModel):
-    afterId: Optional[str] = None
-    beforeId: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    issueId: str
-    subIssueId: str
+    after_id: Optional[str] = Field(alias="afterId", default=None)
+    before_id: Optional[str] = Field(alias="beforeId", default=None)
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    issue_id: str = Field(alias="issueId")
+    sub_issue_id: str = Field(alias="subIssueId")
 
 
 class RequestReviewsInput(BaseModel):
-    botIds: Optional[List[str]] = None
-    clientMutationId: Optional[str] = None
-    pullRequestId: str
-    teamIds: Optional[List[str]] = None
+    bot_ids: Optional[List[str]] = Field(alias="botIds", default=None)
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    pull_request_id: str = Field(alias="pullRequestId")
+    team_ids: Optional[List[str]] = Field(alias="teamIds", default=None)
     union: Optional[bool] = False
-    userIds: Optional[List[str]] = None
+    user_ids: Optional[List[str]] = Field(alias="userIds", default=None)
 
 
 class RequiredDeploymentsParametersInput(BaseModel):
-    requiredDeploymentEnvironments: List[str]
+    required_deployment_environments: List[str] = Field(
+        alias="requiredDeploymentEnvironments"
+    )
 
 
 class RequiredStatusCheckInput(BaseModel):
-    appId: Optional[str] = None
+    app_id: Optional[str] = Field(alias="appId", default=None)
     context: str
 
 
 class RequiredStatusChecksParametersInput(BaseModel):
-    doNotEnforceOnCreate: Optional[bool] = None
-    requiredStatusChecks: List["StatusCheckConfigurationInput"]
-    strictRequiredStatusChecksPolicy: bool
+    do_not_enforce_on_create: Optional[bool] = Field(
+        alias="doNotEnforceOnCreate", default=None
+    )
+    required_status_checks: List["StatusCheckConfigurationInput"] = Field(
+        alias="requiredStatusChecks"
+    )
+    strict_required_status_checks_policy: bool = Field(
+        alias="strictRequiredStatusChecksPolicy"
+    )
 
 
 class RerequestCheckSuiteInput(BaseModel):
-    checkSuiteId: str
-    clientMutationId: Optional[str] = None
-    repositoryId: str
+    check_suite_id: str = Field(alias="checkSuiteId")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    repository_id: str = Field(alias="repositoryId")
 
 
 class ResolveReviewThreadInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    threadId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    thread_id: str = Field(alias="threadId")
 
 
 class RetireSponsorsTierInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    tierId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    tier_id: str = Field(alias="tierId")
 
 
 class RevertPullRequestInput(BaseModel):
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     draft: Optional[bool] = False
-    pullRequestId: str
+    pull_request_id: str = Field(alias="pullRequestId")
     title: Optional[str] = None
 
 
 class RevokeEnterpriseOrganizationsMigratorRoleInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
     login: str
 
 
 class RevokeMigratorRoleInput(BaseModel):
     actor: str
-    actorType: ActorType
-    clientMutationId: Optional[str] = None
-    organizationId: str
+    actor_type: ActorType = Field(alias="actorType")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    organization_id: str = Field(alias="organizationId")
 
 
 class RuleParametersInput(BaseModel):
-    branchNamePattern: Optional["BranchNamePatternParametersInput"] = None
-    codeScanning: Optional["CodeScanningParametersInput"] = None
-    commitAuthorEmailPattern: Optional["CommitAuthorEmailPatternParametersInput"] = None
-    commitMessagePattern: Optional["CommitMessagePatternParametersInput"] = None
-    committerEmailPattern: Optional["CommitterEmailPatternParametersInput"] = None
-    fileExtensionRestriction: Optional["FileExtensionRestrictionParametersInput"] = None
-    filePathRestriction: Optional["FilePathRestrictionParametersInput"] = None
-    maxFilePathLength: Optional["MaxFilePathLengthParametersInput"] = None
-    maxFileSize: Optional["MaxFileSizeParametersInput"] = None
-    mergeQueue: Optional["MergeQueueParametersInput"] = None
-    pullRequest: Optional["PullRequestParametersInput"] = None
-    requiredDeployments: Optional["RequiredDeploymentsParametersInput"] = None
-    requiredStatusChecks: Optional["RequiredStatusChecksParametersInput"] = None
-    tagNamePattern: Optional["TagNamePatternParametersInput"] = None
+    branch_name_pattern: Optional["BranchNamePatternParametersInput"] = Field(
+        alias="branchNamePattern", default=None
+    )
+    code_scanning: Optional["CodeScanningParametersInput"] = Field(
+        alias="codeScanning", default=None
+    )
+    commit_author_email_pattern: Optional["CommitAuthorEmailPatternParametersInput"] = (
+        Field(alias="commitAuthorEmailPattern", default=None)
+    )
+    commit_message_pattern: Optional["CommitMessagePatternParametersInput"] = Field(
+        alias="commitMessagePattern", default=None
+    )
+    committer_email_pattern: Optional["CommitterEmailPatternParametersInput"] = Field(
+        alias="committerEmailPattern", default=None
+    )
+    file_extension_restriction: Optional["FileExtensionRestrictionParametersInput"] = (
+        Field(alias="fileExtensionRestriction", default=None)
+    )
+    file_path_restriction: Optional["FilePathRestrictionParametersInput"] = Field(
+        alias="filePathRestriction", default=None
+    )
+    max_file_path_length: Optional["MaxFilePathLengthParametersInput"] = Field(
+        alias="maxFilePathLength", default=None
+    )
+    max_file_size: Optional["MaxFileSizeParametersInput"] = Field(
+        alias="maxFileSize", default=None
+    )
+    merge_queue: Optional["MergeQueueParametersInput"] = Field(
+        alias="mergeQueue", default=None
+    )
+    pull_request: Optional["PullRequestParametersInput"] = Field(
+        alias="pullRequest", default=None
+    )
+    required_deployments: Optional["RequiredDeploymentsParametersInput"] = Field(
+        alias="requiredDeployments", default=None
+    )
+    required_status_checks: Optional["RequiredStatusChecksParametersInput"] = Field(
+        alias="requiredStatusChecks", default=None
+    )
+    tag_name_pattern: Optional["TagNamePatternParametersInput"] = Field(
+        alias="tagNamePattern", default=None
+    )
     update: Optional["UpdateParametersInput"] = None
     workflows: Optional["WorkflowsParametersInput"] = None
 
@@ -1836,34 +1974,34 @@ class SecurityVulnerabilityOrder(BaseModel):
 
 
 class SetEnterpriseIdentityProviderInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    digestMethod: SamlDigestAlgorithm
-    enterpriseId: str
-    idpCertificate: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    digest_method: SamlDigestAlgorithm = Field(alias="digestMethod")
+    enterprise_id: str = Field(alias="enterpriseId")
+    idp_certificate: str = Field(alias="idpCertificate")
     issuer: Optional[str] = None
-    signatureMethod: SamlSignatureAlgorithm
-    ssoUrl: Any
+    signature_method: SamlSignatureAlgorithm = Field(alias="signatureMethod")
+    sso_url: Any = Field(alias="ssoUrl")
 
 
 class SetOrganizationInteractionLimitInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     expiry: Optional[RepositoryInteractionLimitExpiry] = None
     limit: RepositoryInteractionLimit
-    organizationId: str
+    organization_id: str = Field(alias="organizationId")
 
 
 class SetRepositoryInteractionLimitInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     expiry: Optional[RepositoryInteractionLimitExpiry] = None
     limit: RepositoryInteractionLimit
-    repositoryId: str
+    repository_id: str = Field(alias="repositoryId")
 
 
 class SetUserInteractionLimitInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     expiry: Optional[RepositoryInteractionLimitExpiry] = None
     limit: RepositoryInteractionLimit
-    userId: str
+    user_id: str = Field(alias="userId")
 
 
 class SponsorAndLifetimeValueOrder(BaseModel):
@@ -1907,40 +2045,46 @@ class StarOrder(BaseModel):
 
 
 class StartOrganizationMigrationInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    sourceAccessToken: str
-    sourceOrgUrl: Any
-    targetEnterpriseId: str
-    targetOrgName: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    source_access_token: str = Field(alias="sourceAccessToken")
+    source_org_url: Any = Field(alias="sourceOrgUrl")
+    target_enterprise_id: str = Field(alias="targetEnterpriseId")
+    target_org_name: str = Field(alias="targetOrgName")
 
 
 class StartRepositoryMigrationInput(BaseModel):
-    accessToken: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    continueOnError: Optional[bool] = None
-    gitArchiveUrl: Optional[str] = None
-    githubPat: Optional[str] = None
-    lockSource: Optional[bool] = None
-    metadataArchiveUrl: Optional[str] = None
-    ownerId: str
-    repositoryName: str
-    skipReleases: Optional[bool] = None
-    sourceId: str
-    sourceRepositoryUrl: Any
-    targetRepoVisibility: Optional[str] = None
+    access_token: Optional[str] = Field(alias="accessToken", default=None)
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    continue_on_error: Optional[bool] = Field(alias="continueOnError", default=None)
+    git_archive_url: Optional[str] = Field(alias="gitArchiveUrl", default=None)
+    github_pat: Optional[str] = Field(alias="githubPat", default=None)
+    lock_source: Optional[bool] = Field(alias="lockSource", default=None)
+    metadata_archive_url: Optional[str] = Field(
+        alias="metadataArchiveUrl", default=None
+    )
+    owner_id: str = Field(alias="ownerId")
+    repository_name: str = Field(alias="repositoryName")
+    skip_releases: Optional[bool] = Field(alias="skipReleases", default=None)
+    source_id: str = Field(alias="sourceId")
+    source_repository_url: Any = Field(alias="sourceRepositoryUrl")
+    target_repo_visibility: Optional[str] = Field(
+        alias="targetRepoVisibility", default=None
+    )
 
 
 class StatusCheckConfigurationInput(BaseModel):
     context: str
-    integrationId: Optional[int] = None
+    integration_id: Optional[int] = Field(alias="integrationId", default=None)
 
 
 class SubmitPullRequestReviewInput(BaseModel):
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     event: PullRequestReviewEvent
-    pullRequestId: Optional[str] = None
-    pullRequestReviewId: Optional[str] = None
+    pull_request_id: Optional[str] = Field(alias="pullRequestId", default=None)
+    pull_request_review_id: Optional[str] = Field(
+        alias="pullRequestReviewId", default=None
+    )
 
 
 class TagNamePatternParametersInput(BaseModel):
@@ -1976,354 +2120,414 @@ class TeamRepositoryOrder(BaseModel):
 
 
 class TransferEnterpriseOrganizationInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    destinationEnterpriseId: str
-    organizationId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    destination_enterprise_id: str = Field(alias="destinationEnterpriseId")
+    organization_id: str = Field(alias="organizationId")
 
 
 class TransferIssueInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    createLabelsIfMissing: Optional[bool] = False
-    issueId: str
-    repositoryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    create_labels_if_missing: Optional[bool] = Field(
+        alias="createLabelsIfMissing", default=False
+    )
+    issue_id: str = Field(alias="issueId")
+    repository_id: str = Field(alias="repositoryId")
 
 
 class UnarchiveProjectV2ItemInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    itemId: str
-    projectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    item_id: str = Field(alias="itemId")
+    project_id: str = Field(alias="projectId")
 
 
 class UnarchiveRepositoryInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    repositoryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    repository_id: str = Field(alias="repositoryId")
 
 
 class UnfollowOrganizationInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    organizationId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    organization_id: str = Field(alias="organizationId")
 
 
 class UnfollowUserInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    userId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    user_id: str = Field(alias="userId")
 
 
 class UnlinkProjectV2FromRepositoryInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    projectId: str
-    repositoryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    project_id: str = Field(alias="projectId")
+    repository_id: str = Field(alias="repositoryId")
 
 
 class UnlinkProjectV2FromTeamInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    projectId: str
-    teamId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    project_id: str = Field(alias="projectId")
+    team_id: str = Field(alias="teamId")
 
 
 class UnlinkRepositoryFromProjectInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    projectId: str
-    repositoryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    project_id: str = Field(alias="projectId")
+    repository_id: str = Field(alias="repositoryId")
 
 
 class UnlockLockableInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    lockableId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    lockable_id: str = Field(alias="lockableId")
 
 
 class UnmarkDiscussionCommentAsAnswerInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class UnmarkFileAsViewedInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     path: str
-    pullRequestId: str
+    pull_request_id: str = Field(alias="pullRequestId")
 
 
 class UnmarkIssueAsDuplicateInput(BaseModel):
-    canonicalId: str
-    clientMutationId: Optional[str] = None
-    duplicateId: str
+    canonical_id: str = Field(alias="canonicalId")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    duplicate_id: str = Field(alias="duplicateId")
 
 
 class UnmarkProjectV2AsTemplateInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    projectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    project_id: str = Field(alias="projectId")
 
 
 class UnminimizeCommentInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    subjectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    subject_id: str = Field(alias="subjectId")
 
 
 class UnpinIssueInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    issueId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    issue_id: str = Field(alias="issueId")
 
 
 class UnresolveReviewThreadInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    threadId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    thread_id: str = Field(alias="threadId")
 
 
 class UpdateBranchProtectionRuleInput(BaseModel):
-    allowsDeletions: Optional[bool] = None
-    allowsForcePushes: Optional[bool] = None
-    blocksCreations: Optional[bool] = None
-    branchProtectionRuleId: str
-    bypassForcePushActorIds: Optional[List[str]] = None
-    bypassPullRequestActorIds: Optional[List[str]] = None
-    clientMutationId: Optional[str] = None
-    dismissesStaleReviews: Optional[bool] = None
-    isAdminEnforced: Optional[bool] = None
-    lockAllowsFetchAndMerge: Optional[bool] = None
-    lockBranch: Optional[bool] = None
+    allows_deletions: Optional[bool] = Field(alias="allowsDeletions", default=None)
+    allows_force_pushes: Optional[bool] = Field(alias="allowsForcePushes", default=None)
+    blocks_creations: Optional[bool] = Field(alias="blocksCreations", default=None)
+    branch_protection_rule_id: str = Field(alias="branchProtectionRuleId")
+    bypass_force_push_actor_ids: Optional[List[str]] = Field(
+        alias="bypassForcePushActorIds", default=None
+    )
+    bypass_pull_request_actor_ids: Optional[List[str]] = Field(
+        alias="bypassPullRequestActorIds", default=None
+    )
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    dismisses_stale_reviews: Optional[bool] = Field(
+        alias="dismissesStaleReviews", default=None
+    )
+    is_admin_enforced: Optional[bool] = Field(alias="isAdminEnforced", default=None)
+    lock_allows_fetch_and_merge: Optional[bool] = Field(
+        alias="lockAllowsFetchAndMerge", default=None
+    )
+    lock_branch: Optional[bool] = Field(alias="lockBranch", default=None)
     pattern: Optional[str] = None
-    pushActorIds: Optional[List[str]] = None
-    requireLastPushApproval: Optional[bool] = None
-    requiredApprovingReviewCount: Optional[int] = None
-    requiredDeploymentEnvironments: Optional[List[str]] = None
-    requiredStatusCheckContexts: Optional[List[str]] = None
-    requiredStatusChecks: Optional[List["RequiredStatusCheckInput"]] = None
-    requiresApprovingReviews: Optional[bool] = None
-    requiresCodeOwnerReviews: Optional[bool] = None
-    requiresCommitSignatures: Optional[bool] = None
-    requiresConversationResolution: Optional[bool] = None
-    requiresDeployments: Optional[bool] = None
-    requiresLinearHistory: Optional[bool] = None
-    requiresStatusChecks: Optional[bool] = None
-    requiresStrictStatusChecks: Optional[bool] = None
-    restrictsPushes: Optional[bool] = None
-    restrictsReviewDismissals: Optional[bool] = None
-    reviewDismissalActorIds: Optional[List[str]] = None
+    push_actor_ids: Optional[List[str]] = Field(alias="pushActorIds", default=None)
+    require_last_push_approval: Optional[bool] = Field(
+        alias="requireLastPushApproval", default=None
+    )
+    required_approving_review_count: Optional[int] = Field(
+        alias="requiredApprovingReviewCount", default=None
+    )
+    required_deployment_environments: Optional[List[str]] = Field(
+        alias="requiredDeploymentEnvironments", default=None
+    )
+    required_status_check_contexts: Optional[List[str]] = Field(
+        alias="requiredStatusCheckContexts", default=None
+    )
+    required_status_checks: Optional[List["RequiredStatusCheckInput"]] = Field(
+        alias="requiredStatusChecks", default=None
+    )
+    requires_approving_reviews: Optional[bool] = Field(
+        alias="requiresApprovingReviews", default=None
+    )
+    requires_code_owner_reviews: Optional[bool] = Field(
+        alias="requiresCodeOwnerReviews", default=None
+    )
+    requires_commit_signatures: Optional[bool] = Field(
+        alias="requiresCommitSignatures", default=None
+    )
+    requires_conversation_resolution: Optional[bool] = Field(
+        alias="requiresConversationResolution", default=None
+    )
+    requires_deployments: Optional[bool] = Field(
+        alias="requiresDeployments", default=None
+    )
+    requires_linear_history: Optional[bool] = Field(
+        alias="requiresLinearHistory", default=None
+    )
+    requires_status_checks: Optional[bool] = Field(
+        alias="requiresStatusChecks", default=None
+    )
+    requires_strict_status_checks: Optional[bool] = Field(
+        alias="requiresStrictStatusChecks", default=None
+    )
+    restricts_pushes: Optional[bool] = Field(alias="restrictsPushes", default=None)
+    restricts_review_dismissals: Optional[bool] = Field(
+        alias="restrictsReviewDismissals", default=None
+    )
+    review_dismissal_actor_ids: Optional[List[str]] = Field(
+        alias="reviewDismissalActorIds", default=None
+    )
 
 
 class UpdateCheckRunInput(BaseModel):
     actions: Optional[List["CheckRunAction"]] = None
-    checkRunId: str
-    clientMutationId: Optional[str] = None
-    completedAt: Optional[Any] = None
+    check_run_id: str = Field(alias="checkRunId")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    completed_at: Optional[Any] = Field(alias="completedAt", default=None)
     conclusion: Optional[CheckConclusionState] = None
-    detailsUrl: Optional[Any] = None
-    externalId: Optional[str] = None
+    details_url: Optional[Any] = Field(alias="detailsUrl", default=None)
+    external_id: Optional[str] = Field(alias="externalId", default=None)
     name: Optional[str] = None
     output: Optional["CheckRunOutput"] = None
-    repositoryId: str
-    startedAt: Optional[Any] = None
+    repository_id: str = Field(alias="repositoryId")
+    started_at: Optional[Any] = Field(alias="startedAt", default=None)
     status: Optional[RequestableCheckStatusState] = None
 
 
 class UpdateCheckSuitePreferencesInput(BaseModel):
-    autoTriggerPreferences: List["CheckSuiteAutoTriggerPreference"]
-    clientMutationId: Optional[str] = None
-    repositoryId: str
+    auto_trigger_preferences: List["CheckSuiteAutoTriggerPreference"] = Field(
+        alias="autoTriggerPreferences"
+    )
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    repository_id: str = Field(alias="repositoryId")
 
 
 class UpdateDiscussionCommentInput(BaseModel):
     body: str
-    clientMutationId: Optional[str] = None
-    commentId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    comment_id: str = Field(alias="commentId")
 
 
 class UpdateDiscussionInput(BaseModel):
     body: Optional[str] = None
-    categoryId: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    discussionId: str
+    category_id: Optional[str] = Field(alias="categoryId", default=None)
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    discussion_id: str = Field(alias="discussionId")
     title: Optional[str] = None
 
 
 class UpdateEnterpriseAdministratorRoleInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
     login: str
     role: EnterpriseAdministratorRole
 
 
 class UpdateEnterpriseAllowPrivateRepositoryForkingSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    policyValue: Optional[EnterpriseAllowPrivateRepositoryForkingPolicyValue] = None
-    settingValue: EnterpriseEnabledDisabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    policy_value: Optional[EnterpriseAllowPrivateRepositoryForkingPolicyValue] = Field(
+        alias="policyValue", default=None
+    )
+    setting_value: EnterpriseEnabledDisabledSettingValue = Field(alias="settingValue")
 
 
 class UpdateEnterpriseDefaultRepositoryPermissionSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseDefaultRepositoryPermissionSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseDefaultRepositoryPermissionSettingValue = Field(
+        alias="settingValue"
+    )
 
 
 class UpdateEnterpriseDeployKeySettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseEnabledDisabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseEnabledDisabledSettingValue = Field(alias="settingValue")
 
 
 class UpdateEnterpriseMembersCanChangeRepositoryVisibilitySettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseEnabledDisabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseEnabledDisabledSettingValue = Field(alias="settingValue")
 
 
 class UpdateEnterpriseMembersCanCreateRepositoriesSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    membersCanCreateInternalRepositories: Optional[bool] = None
-    membersCanCreatePrivateRepositories: Optional[bool] = None
-    membersCanCreatePublicRepositories: Optional[bool] = None
-    membersCanCreateRepositoriesPolicyEnabled: Optional[bool] = None
-    settingValue: Optional[EnterpriseMembersCanCreateRepositoriesSettingValue] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    members_can_create_internal_repositories: Optional[bool] = Field(
+        alias="membersCanCreateInternalRepositories", default=None
+    )
+    members_can_create_private_repositories: Optional[bool] = Field(
+        alias="membersCanCreatePrivateRepositories", default=None
+    )
+    members_can_create_public_repositories: Optional[bool] = Field(
+        alias="membersCanCreatePublicRepositories", default=None
+    )
+    members_can_create_repositories_policy_enabled: Optional[bool] = Field(
+        alias="membersCanCreateRepositoriesPolicyEnabled", default=None
+    )
+    setting_value: Optional[EnterpriseMembersCanCreateRepositoriesSettingValue] = Field(
+        alias="settingValue", default=None
+    )
 
 
 class UpdateEnterpriseMembersCanDeleteIssuesSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseEnabledDisabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseEnabledDisabledSettingValue = Field(alias="settingValue")
 
 
 class UpdateEnterpriseMembersCanDeleteRepositoriesSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseEnabledDisabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseEnabledDisabledSettingValue = Field(alias="settingValue")
 
 
 class UpdateEnterpriseMembersCanInviteCollaboratorsSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseEnabledDisabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseEnabledDisabledSettingValue = Field(alias="settingValue")
 
 
 class UpdateEnterpriseMembersCanMakePurchasesSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseMembersCanMakePurchasesSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseMembersCanMakePurchasesSettingValue = Field(
+        alias="settingValue"
+    )
 
 
 class UpdateEnterpriseMembersCanUpdateProtectedBranchesSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseEnabledDisabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseEnabledDisabledSettingValue = Field(alias="settingValue")
 
 
 class UpdateEnterpriseMembersCanViewDependencyInsightsSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseEnabledDisabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseEnabledDisabledSettingValue = Field(alias="settingValue")
 
 
 class UpdateEnterpriseOrganizationProjectsSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseEnabledDisabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseEnabledDisabledSettingValue = Field(alias="settingValue")
 
 
 class UpdateEnterpriseOwnerOrganizationRoleInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    organizationId: str
-    organizationRole: RoleInOrganization
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    organization_id: str = Field(alias="organizationId")
+    organization_role: RoleInOrganization = Field(alias="organizationRole")
 
 
 class UpdateEnterpriseProfileInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     description: Optional[str] = None
-    enterpriseId: str
+    enterprise_id: str = Field(alias="enterpriseId")
     location: Optional[str] = None
     name: Optional[str] = None
-    websiteUrl: Optional[str] = None
+    website_url: Optional[str] = Field(alias="websiteUrl", default=None)
 
 
 class UpdateEnterpriseRepositoryProjectsSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseEnabledDisabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseEnabledDisabledSettingValue = Field(alias="settingValue")
 
 
 class UpdateEnterpriseTeamDiscussionsSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseEnabledDisabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseEnabledDisabledSettingValue = Field(alias="settingValue")
 
 
 class UpdateEnterpriseTwoFactorAuthenticationDisallowedMethodsSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseDisallowedMethodsSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseDisallowedMethodsSettingValue = Field(alias="settingValue")
 
 
 class UpdateEnterpriseTwoFactorAuthenticationRequiredSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enterpriseId: str
-    settingValue: EnterpriseEnabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enterprise_id: str = Field(alias="enterpriseId")
+    setting_value: EnterpriseEnabledSettingValue = Field(alias="settingValue")
 
 
 class UpdateEnvironmentInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    environmentId: str
-    preventSelfReview: Optional[bool] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    environment_id: str = Field(alias="environmentId")
+    prevent_self_review: Optional[bool] = Field(alias="preventSelfReview", default=None)
     reviewers: Optional[List[str]] = None
-    waitTimer: Optional[int] = None
+    wait_timer: Optional[int] = Field(alias="waitTimer", default=None)
 
 
 class UpdateIpAllowListEnabledSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    ownerId: str
-    settingValue: IpAllowListEnabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    owner_id: str = Field(alias="ownerId")
+    setting_value: IpAllowListEnabledSettingValue = Field(alias="settingValue")
 
 
 class UpdateIpAllowListEntryInput(BaseModel):
-    allowListValue: str
-    clientMutationId: Optional[str] = None
-    ipAllowListEntryId: str
-    isActive: bool
+    allow_list_value: str = Field(alias="allowListValue")
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    ip_allow_list_entry_id: str = Field(alias="ipAllowListEntryId")
+    is_active: bool = Field(alias="isActive")
     name: Optional[str] = None
 
 
 class UpdateIpAllowListForInstalledAppsEnabledSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    ownerId: str
-    settingValue: IpAllowListForInstalledAppsEnabledSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    owner_id: str = Field(alias="ownerId")
+    setting_value: IpAllowListForInstalledAppsEnabledSettingValue = Field(
+        alias="settingValue"
+    )
 
 
 class UpdateIssueCommentInput(BaseModel):
     body: str
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class UpdateIssueInput(BaseModel):
-    assigneeIds: Optional[List[str]] = None
+    assignee_ids: Optional[List[str]] = Field(alias="assigneeIds", default=None)
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
-    issueTypeId: Optional[str] = None
-    labelIds: Optional[List[str]] = None
-    milestoneId: Optional[str] = None
-    projectIds: Optional[List[str]] = None
+    issue_type_id: Optional[str] = Field(alias="issueTypeId", default=None)
+    label_ids: Optional[List[str]] = Field(alias="labelIds", default=None)
+    milestone_id: Optional[str] = Field(alias="milestoneId", default=None)
+    project_ids: Optional[List[str]] = Field(alias="projectIds", default=None)
     state: Optional[IssueState] = None
     title: Optional[str] = None
 
 
 class UpdateIssueIssueTypeInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    issueId: str
-    issueTypeId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    issue_id: str = Field(alias="issueId")
+    issue_type_id: Optional[str] = Field(alias="issueTypeId", default=None)
 
 
 class UpdateIssueTypeInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     color: Optional[IssueTypeColor] = None
     description: Optional[str] = None
-    isEnabled: Optional[bool] = None
-    issueTypeId: str
+    is_enabled: Optional[bool] = Field(alias="isEnabled", default=None)
+    issue_type_id: str = Field(alias="issueTypeId")
     name: Optional[str] = None
 
 
 class UpdateLabelInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     color: Optional[str] = None
     description: Optional[str] = None
     id: str
@@ -2331,215 +2535,233 @@ class UpdateLabelInput(BaseModel):
 
 
 class UpdateNotificationRestrictionSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    ownerId: str
-    settingValue: NotificationRestrictionSettingValue
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    owner_id: str = Field(alias="ownerId")
+    setting_value: NotificationRestrictionSettingValue = Field(alias="settingValue")
 
 
 class UpdateOrganizationAllowPrivateRepositoryForkingSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    forkingEnabled: bool
-    organizationId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    forking_enabled: bool = Field(alias="forkingEnabled")
+    organization_id: str = Field(alias="organizationId")
 
 
 class UpdateOrganizationWebCommitSignoffSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    organizationId: str
-    webCommitSignoffRequired: bool
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    organization_id: str = Field(alias="organizationId")
+    web_commit_signoff_required: bool = Field(alias="webCommitSignoffRequired")
 
 
 class UpdateParametersInput(BaseModel):
-    updateAllowsFetchAndMerge: bool
+    update_allows_fetch_and_merge: bool = Field(alias="updateAllowsFetchAndMerge")
 
 
 class UpdatePatreonSponsorabilityInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    enablePatreonSponsorships: bool
-    sponsorableLogin: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    enable_patreon_sponsorships: bool = Field(alias="enablePatreonSponsorships")
+    sponsorable_login: Optional[str] = Field(alias="sponsorableLogin", default=None)
 
 
 class UpdateProjectCardInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    isArchived: Optional[bool] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    is_archived: Optional[bool] = Field(alias="isArchived", default=None)
     note: Optional[str] = None
-    projectCardId: str
+    project_card_id: str = Field(alias="projectCardId")
 
 
 class UpdateProjectColumnInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     name: str
-    projectColumnId: str
+    project_column_id: str = Field(alias="projectColumnId")
 
 
 class UpdateProjectInput(BaseModel):
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     name: Optional[str] = None
-    projectId: str
+    project_id: str = Field(alias="projectId")
     public: Optional[bool] = None
     state: Optional[ProjectState] = None
 
 
 class UpdateProjectV2CollaboratorsInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     collaborators: List["ProjectV2Collaborator"]
-    projectId: str
+    project_id: str = Field(alias="projectId")
 
 
 class UpdateProjectV2DraftIssueInput(BaseModel):
-    assigneeIds: Optional[List[str]] = None
+    assignee_ids: Optional[List[str]] = Field(alias="assigneeIds", default=None)
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    draftIssueId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    draft_issue_id: str = Field(alias="draftIssueId")
     title: Optional[str] = None
 
 
 class UpdateProjectV2FieldInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    fieldId: str
-    iterationConfiguration: Optional["ProjectV2IterationFieldConfigurationInput"] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    field_id: str = Field(alias="fieldId")
+    iteration_configuration: Optional["ProjectV2IterationFieldConfigurationInput"] = (
+        Field(alias="iterationConfiguration", default=None)
+    )
     name: Optional[str] = None
-    singleSelectOptions: Optional[List["ProjectV2SingleSelectFieldOptionInput"]] = None
+    single_select_options: Optional[List["ProjectV2SingleSelectFieldOptionInput"]] = (
+        Field(alias="singleSelectOptions", default=None)
+    )
 
 
 class UpdateProjectV2Input(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     closed: Optional[bool] = None
-    projectId: str
+    project_id: str = Field(alias="projectId")
     public: Optional[bool] = None
     readme: Optional[str] = None
-    shortDescription: Optional[str] = None
+    short_description: Optional[str] = Field(alias="shortDescription", default=None)
     title: Optional[str] = None
 
 
 class UpdateProjectV2ItemFieldValueInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    fieldId: str
-    itemId: str
-    projectId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    field_id: str = Field(alias="fieldId")
+    item_id: str = Field(alias="itemId")
+    project_id: str = Field(alias="projectId")
     value: "ProjectV2FieldValue"
 
 
 class UpdateProjectV2ItemPositionInput(BaseModel):
-    afterId: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    itemId: str
-    projectId: str
+    after_id: Optional[str] = Field(alias="afterId", default=None)
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    item_id: str = Field(alias="itemId")
+    project_id: str = Field(alias="projectId")
 
 
 class UpdateProjectV2StatusUpdateInput(BaseModel):
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    startDate: Optional[Any] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    start_date: Optional[Any] = Field(alias="startDate", default=None)
     status: Optional[ProjectV2StatusUpdateStatus] = None
-    statusUpdateId: str
-    targetDate: Optional[Any] = None
+    status_update_id: str = Field(alias="statusUpdateId")
+    target_date: Optional[Any] = Field(alias="targetDate", default=None)
 
 
 class UpdatePullRequestBranchInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    expectedHeadOid: Optional[Any] = None
-    pullRequestId: str
-    updateMethod: Optional[PullRequestBranchUpdateMethod] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    expected_head_oid: Optional[Any] = Field(alias="expectedHeadOid", default=None)
+    pull_request_id: str = Field(alias="pullRequestId")
+    update_method: Optional[PullRequestBranchUpdateMethod] = Field(
+        alias="updateMethod", default=None
+    )
 
 
 class UpdatePullRequestInput(BaseModel):
-    assigneeIds: Optional[List[str]] = None
-    baseRefName: Optional[str] = None
+    assignee_ids: Optional[List[str]] = Field(alias="assigneeIds", default=None)
+    base_ref_name: Optional[str] = Field(alias="baseRefName", default=None)
     body: Optional[str] = None
-    clientMutationId: Optional[str] = None
-    labelIds: Optional[List[str]] = None
-    maintainerCanModify: Optional[bool] = None
-    milestoneId: Optional[str] = None
-    projectIds: Optional[List[str]] = None
-    pullRequestId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    label_ids: Optional[List[str]] = Field(alias="labelIds", default=None)
+    maintainer_can_modify: Optional[bool] = Field(
+        alias="maintainerCanModify", default=None
+    )
+    milestone_id: Optional[str] = Field(alias="milestoneId", default=None)
+    project_ids: Optional[List[str]] = Field(alias="projectIds", default=None)
+    pull_request_id: str = Field(alias="pullRequestId")
     state: Optional[PullRequestUpdateState] = None
     title: Optional[str] = None
 
 
 class UpdatePullRequestReviewCommentInput(BaseModel):
     body: str
-    clientMutationId: Optional[str] = None
-    pullRequestReviewCommentId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    pull_request_review_comment_id: str = Field(alias="pullRequestReviewCommentId")
 
 
 class UpdatePullRequestReviewInput(BaseModel):
     body: str
-    clientMutationId: Optional[str] = None
-    pullRequestReviewId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    pull_request_review_id: str = Field(alias="pullRequestReviewId")
 
 
 class UpdateRefInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     force: Optional[bool] = False
     oid: Any
-    refId: str
+    ref_id: str = Field(alias="refId")
 
 
 class UpdateRefsInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    refUpdates: List["RefUpdate"]
-    repositoryId: str
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    ref_updates: List["RefUpdate"] = Field(alias="refUpdates")
+    repository_id: str = Field(alias="repositoryId")
 
 
 class UpdateRepositoryInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     description: Optional[str] = None
-    hasDiscussionsEnabled: Optional[bool] = None
-    hasIssuesEnabled: Optional[bool] = None
-    hasProjectsEnabled: Optional[bool] = None
-    hasSponsorshipsEnabled: Optional[bool] = None
-    hasWikiEnabled: Optional[bool] = None
-    homepageUrl: Optional[Any] = None
+    has_discussions_enabled: Optional[bool] = Field(
+        alias="hasDiscussionsEnabled", default=None
+    )
+    has_issues_enabled: Optional[bool] = Field(alias="hasIssuesEnabled", default=None)
+    has_projects_enabled: Optional[bool] = Field(
+        alias="hasProjectsEnabled", default=None
+    )
+    has_sponsorships_enabled: Optional[bool] = Field(
+        alias="hasSponsorshipsEnabled", default=None
+    )
+    has_wiki_enabled: Optional[bool] = Field(alias="hasWikiEnabled", default=None)
+    homepage_url: Optional[Any] = Field(alias="homepageUrl", default=None)
     name: Optional[str] = None
-    repositoryId: str
+    repository_id: str = Field(alias="repositoryId")
     template: Optional[bool] = None
 
 
 class UpdateRepositoryRulesetInput(BaseModel):
-    bypassActors: Optional[List["RepositoryRulesetBypassActorInput"]] = None
-    clientMutationId: Optional[str] = None
+    bypass_actors: Optional[List["RepositoryRulesetBypassActorInput"]] = Field(
+        alias="bypassActors", default=None
+    )
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     conditions: Optional["RepositoryRuleConditionsInput"] = None
     enforcement: Optional[RuleEnforcement] = None
     name: Optional[str] = None
-    repositoryRulesetId: str
+    repository_ruleset_id: str = Field(alias="repositoryRulesetId")
     rules: Optional[List["RepositoryRuleInput"]] = None
     target: Optional[RepositoryRulesetTarget] = None
 
 
 class UpdateRepositoryWebCommitSignoffSettingInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    repositoryId: str
-    webCommitSignoffRequired: bool
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    repository_id: str = Field(alias="repositoryId")
+    web_commit_signoff_required: bool = Field(alias="webCommitSignoffRequired")
 
 
 class UpdateSponsorshipPreferencesInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    privacyLevel: Optional[SponsorshipPrivacy] = SponsorshipPrivacy.PUBLIC
-    receiveEmails: Optional[bool] = True
-    sponsorId: Optional[str] = None
-    sponsorLogin: Optional[str] = None
-    sponsorableId: Optional[str] = None
-    sponsorableLogin: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    privacy_level: Optional[SponsorshipPrivacy] = Field(
+        alias="privacyLevel", default=SponsorshipPrivacy.PUBLIC
+    )
+    receive_emails: Optional[bool] = Field(alias="receiveEmails", default=True)
+    sponsor_id: Optional[str] = Field(alias="sponsorId", default=None)
+    sponsor_login: Optional[str] = Field(alias="sponsorLogin", default=None)
+    sponsorable_id: Optional[str] = Field(alias="sponsorableId", default=None)
+    sponsorable_login: Optional[str] = Field(alias="sponsorableLogin", default=None)
 
 
 class UpdateSubscriptionInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     state: SubscriptionState
-    subscribableId: str
+    subscribable_id: str = Field(alias="subscribableId")
 
 
 class UpdateTeamDiscussionCommentInput(BaseModel):
     body: str
-    bodyVersion: Optional[str] = None
-    clientMutationId: Optional[str] = None
+    body_version: Optional[str] = Field(alias="bodyVersion", default=None)
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class UpdateTeamDiscussionInput(BaseModel):
     body: Optional[str] = None
-    bodyVersion: Optional[str] = None
-    clientMutationId: Optional[str] = None
+    body_version: Optional[str] = Field(alias="bodyVersion", default=None)
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
     pinned: Optional[bool] = None
     title: Optional[str] = None
@@ -2549,43 +2771,51 @@ class UpdateTeamReviewAssignmentInput(BaseModel):
     algorithm: Optional[TeamReviewAssignmentAlgorithm] = (
         TeamReviewAssignmentAlgorithm.ROUND_ROBIN
     )
-    clientMutationId: Optional[str] = None
-    countMembersAlreadyRequested: Optional[bool] = True
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    count_members_already_requested: Optional[bool] = Field(
+        alias="countMembersAlreadyRequested", default=True
+    )
     enabled: bool
-    excludedTeamMemberIds: Optional[List[str]] = None
+    excluded_team_member_ids: Optional[List[str]] = Field(
+        alias="excludedTeamMemberIds", default=None
+    )
     id: str
-    includeChildTeamMembers: Optional[bool] = True
-    notifyTeam: Optional[bool] = True
-    removeTeamRequest: Optional[bool] = True
-    teamMemberCount: Optional[int] = 1
+    include_child_team_members: Optional[bool] = Field(
+        alias="includeChildTeamMembers", default=True
+    )
+    notify_team: Optional[bool] = Field(alias="notifyTeam", default=True)
+    remove_team_request: Optional[bool] = Field(alias="removeTeamRequest", default=True)
+    team_member_count: Optional[int] = Field(alias="teamMemberCount", default=1)
 
 
 class UpdateTeamsRepositoryInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     permission: RepositoryPermission
-    repositoryId: str
-    teamIds: List[str]
+    repository_id: str = Field(alias="repositoryId")
+    team_ids: List[str] = Field(alias="teamIds")
 
 
 class UpdateTopicsInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    repositoryId: str
-    topicNames: List[str]
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    repository_id: str = Field(alias="repositoryId")
+    topic_names: List[str] = Field(alias="topicNames")
 
 
 class UpdateUserListInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     description: Optional[str] = None
-    isPrivate: Optional[bool] = None
-    listId: str
+    is_private: Optional[bool] = Field(alias="isPrivate", default=None)
+    list_id: str = Field(alias="listId")
     name: Optional[str] = None
 
 
 class UpdateUserListsForItemInput(BaseModel):
-    clientMutationId: Optional[str] = None
-    itemId: str
-    listIds: List[str]
-    suggestedListIds: Optional[List[str]] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
+    item_id: str = Field(alias="itemId")
+    list_ids: List[str] = Field(alias="listIds")
+    suggested_list_ids: Optional[List[str]] = Field(
+        alias="suggestedListIds", default=None
+    )
 
 
 class UserStatusOrder(BaseModel):
@@ -2599,14 +2829,14 @@ class VerifiableDomainOrder(BaseModel):
 
 
 class VerifyVerifiableDomainInput(BaseModel):
-    clientMutationId: Optional[str] = None
+    client_mutation_id: Optional[str] = Field(alias="clientMutationId", default=None)
     id: str
 
 
 class WorkflowFileReferenceInput(BaseModel):
     path: str
     ref: Optional[str] = None
-    repositoryId: int
+    repository_id: int = Field(alias="repositoryId")
     sha: Optional[str] = None
 
 
@@ -2616,7 +2846,9 @@ class WorkflowRunOrder(BaseModel):
 
 
 class WorkflowsParametersInput(BaseModel):
-    doNotEnforceOnCreate: Optional[bool] = None
+    do_not_enforce_on_create: Optional[bool] = Field(
+        alias="doNotEnforceOnCreate", default=None
+    )
     workflows: List["WorkflowFileReferenceInput"]
 
 
