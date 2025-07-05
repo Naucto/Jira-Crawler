@@ -15,7 +15,7 @@ from graphql import (
     print_ast,
 )
 
-from .async_base_client import AsyncBaseClient
+from .base_client import BaseClient
 from .base_operation import GraphQLField
 
 
@@ -23,7 +23,7 @@ def gql(q: str) -> str:
     return q
 
 
-class Client(AsyncBaseClient):
+class Client(BaseClient):
     async def execute_custom_operation(
         self, *fields: GraphQLField, operation_type: OperationType, operation_name: str
     ) -> Dict[str, Any]:
