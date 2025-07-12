@@ -5,7 +5,7 @@ from loguru import logger as L
 
 from graphql_client import Client as GithubGraphQlClient
 from graphql_client.custom_queries import Query as GithubQuery
-from graphql_client.custom_fields import RepositoryFields, ProjectV2ConnectionFields
+from graphql_client.custom_fields import RepositoryFields, ProjectV2ConnectionFields, ProjectV2Fields
 
 import asyncio
 
@@ -123,10 +123,12 @@ class Crawler:
             owner=owner
         ).fields(
             RepositoryFields.projects_v_2(
-                ProjectV2ConnectionFields.nodes(
-                    ProjectV2ConnectionFields
-                ),
                 first=self.MAX_PROJECTS
+            ).fields(
+                ProjectV2ConnectionFields.nodes().fields(
+                    ProjectV2Fields.id,
+                    ProjectV2Fields.title
+                )
             )
         )
 
