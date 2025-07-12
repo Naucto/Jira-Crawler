@@ -1,0 +1,34 @@
+From 3005b0489683969a0bdb47b5dba30452484d147c Mon Sep 17 00:00:00 2001
+From: Alexis Belmonte <alexbelm48@gmail.com>
+Date: Sat, 12 Jul 2025 17:28:24 +0200
+Subject: [PATCH] [CLIENT] [BUGFIX] Rename `issueTypes` fields where applicable
+
+---
+ graphql_client/custom_fields.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/graphql_client/custom_fields.py b/graphql_client/custom_fields.py
+index 83c1742..3f14bb5 100644
+--- a/graphql_client/custom_fields.py
++++ b/graphql_client/custom_fields.py
+@@ -20612,7 +20612,7 @@ class OrganizationFields(GraphQLField):
+         cleared_arguments = {
+             key: value for key, value in arguments.items() if value["value"] is not None
+         }
+-        return IssueTypeConnectionFields("issue_types", arguments=cleared_arguments)
++        return IssueTypeConnectionFields("issueTypes", arguments=cleared_arguments)
+ 
+     @classmethod
+     def item_showcase(cls) -> "ProfileItemShowcaseFields":
+@@ -32618,7 +32618,7 @@ class RepositoryFields(GraphQLField):
+         cleared_arguments = {
+             key: value for key, value in arguments.items() if value["value"] is not None
+         }
+-        return IssueTypeConnectionFields("issue_types", arguments=cleared_arguments)
++        return IssueTypeConnectionFields("issueTypes", arguments=cleared_arguments)
+ 
+     @classmethod
+     def issues(
+-- 
+2.50.1
+
