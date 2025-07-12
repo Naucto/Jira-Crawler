@@ -1,4 +1,4 @@
-from graphql_wrapper import GithubGraphQlClient
+from graphql_wrapper import GithubGraphQlClient, Project
 
 import jira
 import github
@@ -114,9 +114,22 @@ class Crawler:
         owner, repo_name = self._github_repository.split("/")
 
         repo = trio.run(self._github_graphql.get_repository, owner, repo_name)
-        projects = trio.run(repo.get_projects)
+        existing_projects = trio.run(repo.get_projects)
 
-        L.debug("{} GitHub projects found", len(projects))
+        L.debug("{} GitHub projects found on target repo", len(existing_projects))
 
         for epic in jira_epics:
             L.debug("Epic {} ({}) found with {} tasks", epic.issue_id, epic.issue_name, len(epic.tasks))
+
+            project: Project | None = next(
+                (p for p in existing_projects if p.title == epic.issue_name),
+                None
+            )
+
+            if project is not None:
+                L.info("Project {} found, updating it", epic.issue_name)
+            else:
+                L.info("Project {} not found, creating it", epic.issue_name)
+                project = trio.run(repo.create_project, epic.issue_name)
+
+            print(project)

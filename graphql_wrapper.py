@@ -4,10 +4,13 @@ from graphql_client.custom_fields import (
         RepositoryFields,
         RepositoryOwnerInterface,
         ProjectV2ConnectionFields, 
-        ProjectV2Fields
+        ProjectV2Fields,
+        CreateProjectV2PayloadFields
 )
+from graphql_client.custom_mutations import Mutation
+from graphql_client.input_types import CreateProjectV2Input
 
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 
 class Project:
@@ -45,6 +48,24 @@ class Repository:
     @property
     def owner(self) -> str:
         return self._owner
+
+    async def create_project(self, name: str, owner: Optional[str] = None) -> Project:
+        mutation = Mutation.create_project_v_2(
+            CreateProjectV2Input(
+                title=name,
+                repositoryId=self._id,
+                ownerId=self._owner if owner is None else owner,
+            )
+        ).fields(
+            CreateProjectV2PayloadFields.project_v_2().fields(
+                ProjectV2Fields.id,
+                ProjectV2Fields.title
+            )
+        )
+
+        response = await self._client.mutation(mutation, operation_name="createProjectV2")
+
+        return Project(self._client, response["createProjectV2"]["projectV2"])
 
     async def get_projects(self, max_projects: int = 100) -> list[Project]:
         query = Query.repository(
