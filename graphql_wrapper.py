@@ -18,7 +18,7 @@ from graphql_client.custom_fields import (
 from typing import Dict, Any
 
 
-class User:
+class QlUser:
     def __init__(self, client: "GitHubGraphQlClient", raw_body: Dict[str, Any]):
         self._client = client
 
@@ -34,7 +34,7 @@ class User:
         return self._login
 
 
-class Project:
+class QlProject:
     def __init__(self, client: "GitHubGraphQlClient", raw_body: Dict[str, Any]):
         self._client = client
 
@@ -50,7 +50,7 @@ class Project:
         return self._title
 
 
-class IssueType:
+class QlIssueType:
     def __init__(self, client: "GitHubGraphQlClient", raw_body: Dict[str, Any]):
         self._client = client
 
@@ -66,7 +66,7 @@ class IssueType:
         return self._name
 
 
-class Issue:
+class QlIssue:
     def __init__(self, client: "GitHubGraphQlClient", raw_body: Dict[str, Any]):
         self._client = client
 
@@ -76,7 +76,7 @@ class Issue:
         self._body_text = raw_body["bodyText"]
         self._created_at = raw_body["createdAt"]
         self._updated_at = raw_body["updatedAt"]
-        self._closed_at = raw_body.get("closedAt")
+        self._closed_at = raw_body["closedAt"]
 
     @property
     def id(self) -> str:
@@ -117,7 +117,7 @@ class Repository:
 
         self._name = raw_body["name"]
 
-    async def get_projects(self, max_projects: int = 100) -> list[Project]:
+    async def get_projects(self, max_projects: int = 100) -> list[QlProject]:
         query = Query.repository(
             owner=self._ownerLogin,
             name=self._name
@@ -135,11 +135,11 @@ class Repository:
         response = await self._client.raw.query(query, operation_name="repository")
 
         return list(
-            map(lambda node: Project(self._client, node),
+            map(lambda node: QlProject(self._client, node),
                 response["repository"]["projectsV2"]["nodes"])
         )
 
-    async def get_issue_types(self, max_types: int = 100) -> list[IssueType]:
+    async def get_issue_types(self, max_types: int = 100) -> list[QlIssueType]:
         query = Query.repository(
             owner=self._ownerLogin,
             name=self._name
@@ -157,11 +157,11 @@ class Repository:
         response = await self._client.raw.query(query, operation_name="repository")
 
         return list(
-            map(lambda node: IssueType(self._client, node),
+            map(lambda node: QlIssueType(self._client, node),
                 response["repository"]["issueTypes"]["nodes"])
         )
 
-    async def get_issues(self) -> list[Issue]:
+    async def get_issues(self) -> list[QlIssue]:
         transformed_issues = []
         cursor = None
 
@@ -192,7 +192,7 @@ class Repository:
             response = await self._client.raw.query(query, operation_name="repository")
 
             transformed_issues += list(
-                map(lambda node: Issue(self._client, node),
+                map(lambda node: QlIssue(self._client, node),
                     response["repository"]["issues"]["nodes"])
             )
 
@@ -246,7 +246,7 @@ class GitHubGraphQlClient:
 
         return Repository(self, response["repository"])
 
-    async def get_viewer(self) -> User:
+    async def get_viewer(self) -> QlUser:
         query = Query.viewer().fields(
             UserFields.id,
             UserFields.login
@@ -254,7 +254,7 @@ class GitHubGraphQlClient:
 
         response = await self._client.query(query, operation_name="viewer")
 
-        return User(self, response["viewer"])
+        return QlUser(self, response["viewer"])
 
     @property
     def raw(self) -> Client:

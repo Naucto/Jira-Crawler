@@ -1,6 +1,6 @@
-from graphql_wrapper import GitHubGraphQlClient, Project, IssueType
+from graphql_wrapper import GitHubGraphQlClient, QlProject, QlIssueType, QlIssue
+from jira_wrapper import JiraClient, JiraProject, JiraEpic, JiraIssue
 
-import jira
 import github
 
 from loguru import logger as L
@@ -8,43 +8,11 @@ from loguru import logger as L
 import trio
 
 
-class Issue:
-    def __init__(self, jira: jira.JIRA, issue_id: str):
-        self._jira = jira
-        self._issue_id = issue_id
-
-        self._issue = self._jira.issue(issue_id)
-
-    @property
-    def issue_id(self) -> str:
-        return self._issue_id
-
-    @property
-    def issue_name(self) -> str:
-        return self._issue.fields.summary
-
-    @property
-    def issue(self) -> jira.Issue:
-        return self._issue
-
-class Epic(Issue):
-    def __init__(self, jira: jira.JIRA, epic_id: str):
-        super().__init__(jira, epic_id)
-
-    @property
-    def tasks(self) -> list[Issue]:
-        return list(map(lambda issue_id: Issue(self._jira, issue_id),
-            self._jira.search_issues(
-                f'type=Task AND parent={self.issue_id} ORDER BY created ASC',
-                maxResults=False
-            )
-        ))
-
-
 class Crawler:
     MAX_PROJECTS = 25
 
-    def __init__(self, jira_token: str, jira_project_id: str, github_token: str, github_repository: str):
+    def __init__(self, jira_token: str, jira_project_id: str, github_token: str,
+                 github_repository: str):
         self._github_rest = github.Github(
             login_or_token=github_token,
             auth=github.Auth.Token(github_token)
@@ -83,27 +51,19 @@ class Crawler:
 
         jira_token_tuple: tuple[str, str] = tuple(jira_token_set[:2]) # type: ignore
 
-        self._jira = jira.JIRA(
-            server="https://naucto.atlassian.net",
-            basic_auth=jira_token_tuple
-        )
+        self._jira = JiraClient("https://naucto.atlassian.net", jira_token_tuple)
 
         L.info("Jira authenticated successfully")
+        L.debug("Jira instance is at {}", self._jira.base_url)
 
-        server_info = self._jira.server_info()
-        L.debug("Jira instance is at {}", server_info["baseUrl"])
+        jira_project = self._jira.get_project(jira_project_id)
 
-        self._jira_project: jira.Project | None = None
-
-        for project in self._jira.projects():
-            if project.key == jira_project_id:
-                self._jira_project = project
-                break
-
-        if self._jira_project is None:
+        if jira_project is None:
             raise ValueError(f"Jira project {jira_project_id} not found")
 
-    def _transform_issue(self, target_issue_type: IssueType, issue: jira.Issue):
+        self._jira_project: JiraProject = jira_project
+
+    def _transform_issue(self, ql_issue_type: QlIssueType, ql_issue: QlIssue, jira_issue: JiraIssue):
         pass
 
     def crawl(self):
@@ -114,19 +74,18 @@ class Crawler:
                         self._github_repository)
 
         ql_existing_projects = trio.run(ql_target_repo.get_projects)
-        ql_target_project: Project | None = next(
+        ql_target_project: QlProject | None = next(
             (project for project in ql_existing_projects \
                     if project.title == self._github_project_name),
             None
         )
 
         if ql_target_project is None:
-            L.error("Target project {} not found, please create it", self._github_project_name)
-            return
+            raise ValueError(f"Target project {self._github_project_name} not found, please create it")
 
         ql_project_issue_types = trio.run(ql_target_repo.get_issue_types)
         L.debug("Found {} issue types in GitHub target project", len(ql_project_issue_types))
-        ql_target_issue_type: IssueType | None = next(
+        ql_target_issue_type: QlIssueType | None = next(
             (issue_type for issue_type in ql_project_issue_types \
                     if issue_type.title == "Task"),
             None
@@ -136,19 +95,21 @@ class Crawler:
             L.error("Target issue type 'Task' not found in GitHub project, something is wrong")
             return
 
-        jira_tasks = list(map(
-            lambda epic_id: Epic(self._jira, epic_id),
-            self._jira.search_issues(
-                f"project={str(self._jira_project)} AND type=Task ORDER BY created ASC",
-                maxResults=False
-            )
-        ))
+        jira_issues = self._jira_project.get_issues()
 
-        ql_tasks = trio.run(ql_target_repo.get_issues)
+        ql_issues = trio.run(ql_target_repo.get_issues)
+        ql_issues = {issue.title: issue for issue in ql_issues}
 
         L.info("Updating target GitHub project with {} Jira tasks on {} ({} present)",
-               len(jira_tasks), self._github_repository, len(ql_tasks))
+               len(jira_issues), self._github_repository, len(ql_issues))
 
-        for jira_task in jira_tasks:
+        for jira_task in jira_issues:
+            ql_issue = ql_issues.get(jira_task.issue_name)
+
+            if ql_issue is None:
+                L.debug("Creating new GitHub issue for Jira task {} ({})",
+                        jira_task.issue_id, jira_task.issue_name)
+                continue
+
             L.debug("Processing Jira task {} ({})", jira_task.issue_id, jira_task.issue_name)
-            self._transform_issue(ql_target_issue_type, jira_task.issue)
+            self._transform_issue(ql_target_issue_type, ql_issue, jira_task)
