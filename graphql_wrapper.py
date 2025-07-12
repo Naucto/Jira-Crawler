@@ -7,7 +7,10 @@ from graphql_client.custom_fields import (
         ProjectV2ConnectionFields, 
         ProjectV2Fields,
         IssueTypeConnectionFields,
-        IssueTypeFields
+        IssueTypeFields,
+        IssueConnectionFields,
+        IssueEdgeFields,
+        IssueFields
 )
 # from graphql_client.custom_mutations import Mutation
 # from graphql_client.input_types import CreateProjectV2Input
@@ -63,6 +66,47 @@ class IssueType:
         return self._name
 
 
+class Issue:
+    def __init__(self, client: "GitHubGraphQlClient", raw_body: Dict[str, Any]):
+        self._client = client
+
+        self._id = raw_body["id"]
+        self._title = raw_body["title"]
+        self._closed = raw_body["closed"]
+        self._body_text = raw_body["bodyText"]
+        self._created_at = raw_body["createdAt"]
+        self._updated_at = raw_body["updatedAt"]
+        self._closed_at = raw_body.get("closedAt")
+
+    @property
+    def id(self) -> str:
+        return self._id
+
+    @property
+    def title(self) -> str:
+        return self._title
+
+    @property
+    def closed(self) -> bool:
+        return self._closed
+
+    @property
+    def body_text(self) -> str:
+        return self._body_text
+
+    @property
+    def created_at(self) -> str:
+        return self._created_at
+
+    @property
+    def updated_at(self) -> str:
+        return self._updated_at
+
+    @property
+    def closed_at(self) -> str | None:
+        return self._closed_at
+
+
 class Repository:
     def __init__(self, client: "GitHubGraphQlClient", raw_body: Dict[str, Any]):
         self._client = client
@@ -116,6 +160,50 @@ class Repository:
             map(lambda node: IssueType(self._client, node),
                 response["repository"]["issueTypes"]["nodes"])
         )
+
+    async def get_issues(self) -> list[Issue]:
+        transformed_issues = []
+        cursor = None
+
+        while True:
+            query = Query.repository(
+                owner=self._ownerLogin,
+                name=self._name
+            ).fields(
+                RepositoryFields.issues(
+                    first=100,
+                    after=cursor
+                ).fields(
+                    IssueConnectionFields.edges().fields(
+                        IssueEdgeFields.cursor
+                    ),
+                    IssueConnectionFields.nodes().fields(
+                        IssueFields.id,
+                        IssueFields.title,
+                        IssueFields.closed,
+                        IssueFields.body_text,
+                        IssueFields.created_at,
+                        IssueFields.updated_at,
+                        IssueFields.closed_at
+                    )
+                )
+            )
+
+            response = await self._client.raw.query(query, operation_name="repository")
+
+            transformed_issues += list(
+                map(lambda node: Issue(self._client, node),
+                    response["repository"]["issues"]["nodes"])
+            )
+
+            # FIXME: 100 is a hard limit, hardcoded here but fine for our use case
+
+            if len(transformed_issues) < 100:
+                break
+
+            cursor = response["repository"]["issues"]["edges"][-1]["cursor"]
+
+        return transformed_issues
 
     @property
     def id(self) -> str:

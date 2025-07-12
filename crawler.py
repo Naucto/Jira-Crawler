@@ -1,4 +1,4 @@
-from graphql_wrapper import GitHubGraphQlClient, Project
+from graphql_wrapper import GitHubGraphQlClient, Project, IssueType
 
 import jira
 import github
@@ -103,20 +103,17 @@ class Crawler:
         if self._jira_project is None:
             raise ValueError(f"Jira project {jira_project_id} not found")
 
-    def _transform_issue_types(self) -> dict[str, str]:
-        pass
-
-    def _transform_issue(self, issue: jira.Issue):
+    def _transform_issue(self, target_issue_type: IssueType, issue: jira.Issue):
         pass
 
     def crawl(self):
         L.info("Initiated synchronization from Jira to GitHub")
 
-        ql_repo = trio.run(self._github_graphql.get_repository, 
+        ql_target_repo = trio.run(self._github_graphql.get_repository, 
                         self._github_organization_name,
                         self._github_repository)
 
-        ql_existing_projects = trio.run(ql_repo.get_projects)
+        ql_existing_projects = trio.run(ql_target_repo.get_projects)
         ql_target_project: Project | None = next(
             (project for project in ql_existing_projects \
                     if project.title == self._github_project_name),
@@ -127,16 +124,31 @@ class Crawler:
             L.error("Target project {} not found, please create it", self._github_project_name)
             return
 
-        jira_epics = list(map(
+        ql_project_issue_types = trio.run(ql_target_repo.get_issue_types)
+        L.debug("Found {} issue types in GitHub target project", len(ql_project_issue_types))
+        ql_target_issue_type: IssueType | None = next(
+            (issue_type for issue_type in ql_project_issue_types \
+                    if issue_type.title == "Task"),
+            None
+        )
+
+        if ql_target_issue_type is None:
+            L.error("Target issue type 'Task' not found in GitHub project, something is wrong")
+            return
+
+        jira_tasks = list(map(
             lambda epic_id: Epic(self._jira, epic_id),
             self._jira.search_issues(
-                f"project={str(self._jira_project)} AND type=Epic ORDER BY created ASC",
+                f"project={str(self._jira_project)} AND type=Task ORDER BY created ASC",
                 maxResults=False
             )
         ))
 
-        L.info("Updating target GitHub project with {} Jira epics on {}",
-               len(jira_epics), self._github_repository)
+        ql_tasks = trio.run(ql_target_repo.get_issues)
 
-        ql_project_issue_types = trio.run(ql_repo.get_issue_types)
-        L.debug("Found {} issue types in GitHub target project", len(ql_project_issue_types))
+        L.info("Updating target GitHub project with {} Jira tasks on {} ({} present)",
+               len(jira_tasks), self._github_repository, len(ql_tasks))
+
+        for jira_task in jira_tasks:
+            L.debug("Processing Jira task {} ({})", jira_task.issue_id, jira_task.issue_name)
+            self._transform_issue(ql_target_issue_type, jira_task.issue)
