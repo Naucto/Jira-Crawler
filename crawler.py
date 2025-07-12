@@ -1,4 +1,4 @@
-from graphql_wrapper import GithubGraphQlClient, Project
+from graphql_wrapper import GitHubGraphQlClient, Project
 
 import jira
 import github
@@ -45,8 +45,6 @@ class Crawler:
     MAX_PROJECTS = 25
 
     def __init__(self, jira_token: str, jira_project_id: str, github_token: str, github_repository: str):
-        self._github_repository = github_repository
-
         self._github_rest = github.Github(
             login_or_token=github_token,
             auth=github.Auth.Token(github_token)
@@ -54,15 +52,23 @@ class Crawler:
 
         L.info("Github REST API authenticated successfully")
 
-        self._github_graphql = GithubGraphQlClient(github_token)
+        self._github_graphql = GitHubGraphQlClient(github_token)
 
         L.info("Github GraphQL API authenticated successfully")
 
         github_repository_set: list[str] = github_repository.split("/")
-        if len(github_repository_set) != 2:
+        if len(github_repository_set) != 3:
             raise ValueError("Github repository is not in the correct format")
 
-        (github_organization_name, github_repo_name) = tuple(github_repository_set[:2]) # type: ignore
+        (
+                github_organization_name,
+                github_repo_name,
+                github_project_name
+        ) = tuple(github_repository_set[:3]) # type: ignore
+
+        self._github_organization_name = github_organization_name
+        self._github_repository = github_repo_name
+        self._github_project_name = github_project_name
 
         github_organization = self._github_rest.get_organization(github_organization_name)
         L.debug("Github organization {} found", github_organization.login)
@@ -97,39 +103,40 @@ class Crawler:
         if self._jira_project is None:
             raise ValueError(f"Jira project {jira_project_id} not found")
 
+    def _transform_issue_types(self) -> dict[str, str]:
+        pass
+
     def _transform_issue(self, issue: jira.Issue):
         pass
 
     def crawl(self):
         L.info("Initiated synchronization from Jira to GitHub")
 
-        jira_epics = map(
+        ql_repo = trio.run(self._github_graphql.get_repository, 
+                        self._github_organization_name,
+                        self._github_repository)
+
+        ql_existing_projects = trio.run(ql_repo.get_projects)
+        ql_target_project: Project | None = next(
+            (project for project in ql_existing_projects \
+                    if project.title == self._github_project_name),
+            None
+        )
+
+        if ql_target_project is None:
+            L.error("Target project {} not found, please create it", self._github_project_name)
+            return
+
+        jira_epics = list(map(
             lambda epic_id: Epic(self._jira, epic_id),
             self._jira.search_issues(
                 f"project={str(self._jira_project)} AND type=Epic ORDER BY created ASC",
                 maxResults=False
             )
-        )
+        ))
 
-        owner, repo_name = self._github_repository.split("/")
+        L.info("Updating target GitHub project with {} Jira epics on {}",
+               len(jira_epics), self._github_repository)
 
-        repo = trio.run(self._github_graphql.get_repository, owner, repo_name)
-        existing_projects = trio.run(repo.get_projects)
-
-        L.debug("{} GitHub projects found on target repo", len(existing_projects))
-
-        for epic in jira_epics:
-            L.debug("Epic {} ({}) found with {} tasks", epic.issue_id, epic.issue_name, len(epic.tasks))
-
-            project: Project | None = next(
-                (p for p in existing_projects if p.title == epic.issue_name),
-                None
-            )
-
-            if project is not None:
-                L.info("Project {} found, updating it", epic.issue_name)
-            else:
-                L.info("Project {} not found, creating it", epic.issue_name)
-                project = trio.run(repo.create_project, epic.issue_name)
-
-            print(project)
+        ql_project_issue_types = trio.run(ql_repo.get_issue_types)
+        L.debug("Found {} issue types in GitHub target project", len(ql_project_issue_types))
