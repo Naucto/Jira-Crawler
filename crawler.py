@@ -1,13 +1,11 @@
+from graphql_wrapper import GithubGraphQlClient
+
 import jira
 import github
 
 from loguru import logger as L
 
-from graphql_client import Client as GithubGraphQlClient
-from graphql_client.custom_queries import Query as GithubQuery
-from graphql_client.custom_fields import RepositoryFields, ProjectV2ConnectionFields, ProjectV2Fields
-
-import asyncio
+import trio
 
 
 class Issue:
@@ -56,10 +54,7 @@ class Crawler:
 
         L.info("Github REST API authenticated successfully")
 
-        self._github_graphql = GithubGraphQlClient(
-            url="https://api.github.com/graphql",
-            headers={"authorization": f"Bearer {github_token}"}
-        )
+        self._github_graphql = GithubGraphQlClient(github_token)
 
         L.info("Github GraphQL API authenticated successfully")
 
@@ -118,24 +113,10 @@ class Crawler:
 
         owner, repo_name = self._github_repository.split("/")
 
-        repository_query = GithubQuery.repository(
-            name=repo_name,
-            owner=owner
-        ).fields(
-            RepositoryFields.projects_v_2(
-                first=self.MAX_PROJECTS
-            ).fields(
-                ProjectV2ConnectionFields.nodes().fields(
-                    ProjectV2Fields.id,
-                    ProjectV2Fields.title
-                )
-            )
-        )
+        repo = trio.run(self._github_graphql.get_repository, owner, repo_name)
+        projects = trio.run(repo.get_projects)
 
-        response = asyncio.run(self._github_graphql.query(repository_query, operation_name="repository"))
-        print(response)
-
-        L.debug("{} Github projects found", """github_projects.totalCount""")
+        L.debug("{} GitHub projects found", len(projects))
 
         for epic in jira_epics:
             L.debug("Epic {} ({}) found with {} tasks", epic.issue_id, epic.issue_name, len(epic.tasks))

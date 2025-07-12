@@ -4,3 +4,4 @@ PyGithub==2.6.1
 httpx==0.28.1
 pydantic==2.11.7
 graphql-core==3.2.6
+trio==0.30.0
