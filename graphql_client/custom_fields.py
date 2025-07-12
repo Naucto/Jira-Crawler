@@ -20612,7 +20612,7 @@ class OrganizationFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return IssueTypeConnectionFields("issue_types", arguments=cleared_arguments)
+        return IssueTypeConnectionFields("issueTypes", arguments=cleared_arguments)
 
     @classmethod
     def item_showcase(cls) -> "ProfileItemShowcaseFields":
@@ -32618,7 +32618,7 @@ class RepositoryFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return IssueTypeConnectionFields("issue_types", arguments=cleared_arguments)
+        return IssueTypeConnectionFields("issueTypes", arguments=cleared_arguments)
 
     @classmethod
     def issues(
