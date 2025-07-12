@@ -8,12 +8,13 @@ from graphql_client.custom_fields import (
         ProjectV2Fields,
         IssueTypeConnectionFields,
         IssueTypeFields,
+        CreateIssuePayloadFields,
         IssueConnectionFields,
         IssueEdgeFields,
         IssueFields
 )
-# from graphql_client.custom_mutations import Mutation
-# from graphql_client.input_types import CreateProjectV2Input
+from graphql_client.custom_mutations import Mutation
+from graphql_client.input_types import CreateIssueInput
 
 from typing import Dict, Any
 
@@ -204,6 +205,30 @@ class Repository:
             cursor = response["repository"]["issues"]["edges"][-1]["cursor"]
 
         return transformed_issues
+
+    async def create_issue(self, issue_type: QlIssueType, title: str, body: str) -> QlIssue:
+        mutation = Mutation.create_issue(
+            CreateIssueInput(
+                repositoryId=self._id,
+                title=title,
+                body=body,
+                issueTypeId=issue_type.id
+            )
+        ).fields(
+            CreateIssuePayloadFields.issue().fields(
+                IssueFields.id,
+                IssueFields.title,
+                IssueFields.closed,
+                IssueFields.body_text,
+                IssueFields.created_at,
+                IssueFields.updated_at,
+                IssueFields.closed_at
+            )
+        )
+
+        response = await self._client.raw.mutation(mutation, operation_name="createIssue")
+
+        return QlIssue(self._client, response["createIssue"]["issue"])
 
     @property
     def id(self) -> str:

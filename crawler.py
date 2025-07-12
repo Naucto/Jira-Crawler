@@ -103,13 +103,17 @@ class Crawler:
         L.info("Updating target GitHub project with {} Jira tasks on {} ({} present)",
                len(jira_issues), self._github_repository, len(ql_issues))
 
-        for jira_task in jira_issues:
-            ql_issue = ql_issues.get(jira_task.issue_name)
+        for jira_issue in jira_issues:
+            ql_issue = ql_issues.get(jira_issue.name)
+            trsf_issue_name = f"[{jira_issue.id}] {jira_issue.name}"
 
             if ql_issue is None:
-                L.debug("Creating new GitHub issue for Jira task {} ({})",
-                        jira_task.issue_id, jira_task.issue_name)
+                L.debug("Creating new GitHub issue for Jira task {} ({})", jira_issue.id, jira_issue.name)
+                ql_issue = trio.run(ql_target_repo.create_issue, 
+                                    ql_target_issue_type,
+                                    trsf_issue_name,
+                                    jira_issue.description)
                 continue
 
-            L.debug("Processing Jira task {} ({})", jira_task.issue_id, jira_task.issue_name)
-            self._transform_issue(ql_target_issue_type, ql_issue, jira_task)
+            L.debug("Processing Jira task {} ({})", jira_issue.id, jira_issue.name)
+            self._transform_issue(ql_target_issue_type, ql_issue, jira_issue)

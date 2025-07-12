@@ -6,17 +6,21 @@ from typing import Tuple
 class JiraIssue:
     def __init__(self, jira: jira.JIRA, issue_id: str):
         self._jira = jira
-        self._issue_id = issue_id
+        self._id = issue_id
 
         self._issue = self._jira.issue(issue_id)
 
     @property
-    def issue_id(self) -> str:
-        return self._issue_id
+    def id(self) -> str:
+        return self._id
 
     @property
-    def issue_name(self) -> str:
+    def name(self) -> str:
         return self._issue.fields.summary
+
+    @property
+    def description(self) -> str:
+        return self._issue.fields.description or ""
 
     @property
     def issue(self) -> jira.Issue:
@@ -31,7 +35,7 @@ class JiraEpic(JiraIssue):
     def tasks(self) -> list[JiraIssue]:
         return list(map(lambda issue_id: JiraIssue(self._jira, issue_id),
             self._jira.search_issues(
-                f'type=Task AND parent={self.issue_id} ORDER BY created ASC',
+                f'type=Task AND parent={self.id} ORDER BY created ASC',
                 maxResults=False
             )
         ))
