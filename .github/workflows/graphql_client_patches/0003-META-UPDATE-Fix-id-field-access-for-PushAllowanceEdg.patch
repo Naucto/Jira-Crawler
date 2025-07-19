@@ -1,0 +1,38 @@
+From 95bba91935dfd2d2aa09c700eb4cbe3a5b1e17ec Mon Sep 17 00:00:00 2001
+From: Alexis Belmonte <alexbelm48@gmail.com>
+Date: Sat, 19 Jul 2025 15:33:57 +0200
+Subject: [PATCH] =?UTF-8?q?[META]=20[UPDATE]=20Fix=20`id`=C2=A0field=20acc?=
+ =?UTF-8?q?ess=20for=20`PushAllowanceEdgeFields`?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ graphql_client/custom_fields.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/graphql_client/custom_fields.py b/graphql_client/custom_fields.py
+index 75527c5..47bf51a 100644
+--- a/graphql_client/custom_fields.py
++++ b/graphql_client/custom_fields.py
+@@ -28310,7 +28310,7 @@ class QueryFields(GraphQLField):
+             "enterprise_member_invitation_by_token", arguments=cleared_arguments
+         )
+ 
+-    id: "QueryGraphQLField" = QueryGraphQLField("id")
++    id: "GraphQLField" = GraphQLField("id")
+ 
+     @classmethod
+     def license(cls, key: str) -> "LicenseFields":
+@@ -28667,7 +28667,7 @@ class QueryFields(GraphQLField):
+     def fields(
+         self,
+         *subfields: Union[
+-            QueryGraphQLField,
++            # QueryGraphQLField,
+             "CodeOfConductFields",
+             "EnterpriseAdministratorInvitationFields",
+             "EnterpriseFields",
+-- 
+2.50.1
+
