@@ -1,5 +1,5 @@
-from wrapper.github import GitHubGraphQlClient, QlProject, QlIssueType, QlIssue
-from wrapper.jira import JiraClient, JiraProject, JiraEpic, JiraIssue
+from wrapper.github import GitHubGraphQlClient, QlUser, QlProject, QlIssueType, QlIssue
+from wrapper.jira import JiraClient, JiraUser, JiraProject, JiraEpic, JiraIssue
 from common import BridgeMapping
 
 import github
@@ -62,8 +62,20 @@ class Crawler:
 
         self._jira_project: JiraProject = jira_project
 
+        self._bridge_mapping = bridge_mapping
+
     async def _transform_issue(self, ql_issue: QlIssue, jira_issue: JiraIssue):
-        pass
+        source_user: JiraUser | None = jira_issue.assignee
+        mapped_user: QlUser | None = None
+
+        if source_user is not None:
+            mapped_user = self._bridge_mapping.map(self._github_graphql, source_user)
+
+            if mapped_user:
+                L.trace("Found mapped user {} for Jira user {}",
+                        mapped_user.login, source_user.email)
+
+                ql_issue.assigned_users = [mapped_user]
 
     async def crawl(self):
         L.info("Initiated synchronization from Jira to GitHub")

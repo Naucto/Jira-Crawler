@@ -171,6 +171,10 @@ class QlIssue:
     def assigned_users(self) -> list[QlUser]:
         return self._assigned_users
 
+    @assigned_users.setter
+    def assigned_users(self, new_assigned_users: list[QlUser]) -> None:
+        self._assigned_users = new_assigned_users
+
     @property
     def title(self) -> str:
         return self._title

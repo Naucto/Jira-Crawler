@@ -15,10 +15,6 @@ class JiraUser:
     def name(self) -> str:
         return self._user.displayName
 
-    @property
-    def email(self) -> str:
-        return self._user.emailAddress
-
 
 class JiraIssue:
     def __init__(self, jira: jira.JIRA, issue_id: str):
