@@ -695,7 +695,7 @@ from .custom_typing_fields import (
     PushAllowanceEdgeGraphQLField,
     PushAllowanceGraphQLField,
     PushGraphQLField,
-    QueryGraphQLField,
+    # QueryGraphQLField,
     RateLimitGraphQLField,
     ReactableGraphQLField,
     ReactingUserConnectionGraphQLField,
