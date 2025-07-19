@@ -1,5 +1,9 @@
 name: Generate Python GraphQL Client
 on: [workflow_dispatch]
+
+env:
+  GITHUB_GRAPHQL_OUTPUT_PATH: ${GITHUB_WORKSPACE}/wrapper/graphql_client
+
 jobs:
   generate_graphql_client:
     runs-on: ubuntu-latest
@@ -28,10 +32,12 @@ jobs:
 
           (cd "$GITHUB_GRAPHQL_CLIENT" && ariadne-codegen client)
 
-          cp -r "$GITHUB_GRAPHQL_CLIENT/graphql_client" .
+          cp -r "$GITHUB_GRAPHQL_CLIENT/graphql_client" "$GITHUB_GRAPHQL_OUTPUT_PATH"
 
       - name: Patch generated GraphQL client
         run: |
+          cd "$GITHUB_GRAPHQL_OUTPUT_PATH"
+
           for file in .github/workflows/graphql_client_patches/*.patch; do
             git apply --allow-empty "$file"
           done

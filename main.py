@@ -4,6 +4,7 @@ from loguru import logger as L
 import trio
 
 from crawler import Crawler
+from common import BridgeMapping
 
 import os
 
@@ -14,7 +15,8 @@ env_set = {
     "CW_JIRA_TOKEN": "jira_token",
     "CW_JIRA_PROJECT_ID": "jira_project_id",
     "CW_GITHUB_TOKEN": "github_token",
-    "CW_GITHUB_TARGET": "github_repository"
+    "CW_GITHUB_TARGET": "github_repository",
+    "CW_BRIDGE_MAPPING": "bridge_mapping_config_path"
 }
 
 for env_var_name, global_var_name in env_set.items():
@@ -31,11 +33,11 @@ try:
         jira_token=jira_token, # type: ignore
         jira_project_id=jira_project_id, # type: ignore
         github_token=github_token, # type: ignore
-        github_repository=github_repository # type: ignore
+        github_repository=github_repository, # type: ignore
+        bridge_mapping=BridgeMapping(bridge_mapping_config_path) # type: ignore
     )
 except Exception as e:
     L.error(f"Error while instanciating crawler: {e}")
     exit(1)
-
 
 trio.run(crawler.crawl)

@@ -1,18 +1,17 @@
-from graphql_wrapper import GitHubGraphQlClient, QlProject, QlIssueType, QlIssue
-from jira_wrapper import JiraClient, JiraProject, JiraEpic, JiraIssue
+from wrapper.github import GitHubGraphQlClient, QlProject, QlIssueType, QlIssue
+from wrapper.jira import JiraClient, JiraProject, JiraEpic, JiraIssue
+from common import BridgeMapping
 
 import github
 
 from loguru import logger as L
-
-import trio
 
 
 class Crawler:
     MAX_PROJECTS = 25
 
     def __init__(self, jira_token: str, jira_project_id: str, github_token: str,
-                 github_repository: str):
+                 github_repository: str, bridge_mapping: BridgeMapping):
         self._github_rest = github.Github(
             login_or_token=github_token,
             auth=github.Auth.Token(github_token)

@@ -1,6 +1,6 @@
-from graphql_client import Client
-from graphql_client.custom_queries import Query
-from graphql_client.custom_fields import (
+from .graphql_client import Client
+from .graphql_client.custom_queries import Query
+from .graphql_client.custom_fields import (
         UserFields,
         UserConnectionFields,
         RepositoryFields,
@@ -10,6 +10,7 @@ from graphql_client.custom_fields import (
         IssueTypeConnectionFields,
         IssueTypeFields,
         IssueConnectionFields,
+        IssueEdgeFields,
         IssueFields,
         CreateIssuePayloadFields,
         DeleteIssuePayloadFields,
@@ -17,8 +18,8 @@ from graphql_client.custom_fields import (
         RemoveAssigneesFromAssignablePayloadFields,
         AddAssigneesToAssignablePayloadFields
 )
-from graphql_client.custom_mutations import Mutation
-from graphql_client.input_types import (
+from .graphql_client.custom_mutations import Mutation
+from .graphql_client.input_types import (
         IssueState,
         CreateIssueInput,
         DeleteIssueInput,
@@ -284,6 +285,9 @@ class Repository:
                         IssueFields.created_at,
                         IssueFields.updated_at,
                         IssueFields.closed_at
+                    ),
+                    IssueConnectionFields.edges().fields(
+                        IssueEdgeFields.cursor
                     )
                 )
             )
@@ -297,7 +301,7 @@ class Repository:
 
             # FIXME: 100 is a hard limit, hardcoded here but fine for our use case
 
-            if len(transformed_issues) < 100:
+            if len(transformed_issues) < 100 or not response["repository"]["issues"]["edges"]:
                 break
 
             cursor = response["repository"]["issues"]["edges"][-1]["cursor"]
@@ -378,6 +382,16 @@ class GitHubGraphQlClient:
         response = await self._client.query(query, operation_name="viewer")
 
         return QlUser(self, response["viewer"])
+
+    async def get_user(self, username_id: str) -> QlUser:
+        query = Query.user(login=username_id).fields(
+            UserFields.id,
+            UserFields.login
+        )
+
+        response = await self._client.query(query, operation_name="user")
+
+        return QlUser(self, response["user"])
 
     @property
     def raw(self) -> Client:

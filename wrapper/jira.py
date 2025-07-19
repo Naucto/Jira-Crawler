@@ -3,6 +3,23 @@ import jira
 from typing import Tuple
 
 
+class JiraUser:
+    def __init__(self, user: jira.User):
+        self._user = user
+
+    @property
+    def id(self) -> str:
+        return self._user.accountId
+
+    @property
+    def name(self) -> str:
+        return self._user.displayName
+
+    @property
+    def email(self) -> str:
+        return self._user.emailAddress
+
+
 class JiraIssue:
     def __init__(self, jira: jira.JIRA, issue_id: str):
         self._jira = jira
@@ -25,6 +42,15 @@ class JiraIssue:
     @property
     def issue(self) -> jira.Issue:
         return self._issue
+
+    @property
+    def assignee(self) -> JiraUser | None:
+        if self._issue.fields.assignee is None:
+            return None
+
+        return JiraUser(
+            self._jira.user(id=self._issue.fields.assignee.accountId)
+        )
 
 
 class JiraEpic(JiraIssue):
