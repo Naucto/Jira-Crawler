@@ -1,0 +1,37 @@
+From be5ab8f57cdbcaf122ca4aa1a0f357266bc71de9 Mon Sep 17 00:00:00 2001
+From: Alexis Belmonte <alexbelm48@gmail.com>
+Date: Sat, 19 Jul 2025 16:52:13 +0200
+Subject: [PATCH] =?UTF-8?q?[CLIENT]=C2=A0[UPDATE]=20Fix=20GraphQL=20client?=
+ =?UTF-8?q?=20formatted=20variables=20forwarding=20in=20parent=20contexts?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ graphql_client/base_operation.py | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/graphql_client/base_operation.py b/graphql_client/base_operation.py
+index 6e67072..5e64861 100644
+--- a/graphql_client/base_operation.py
++++ b/graphql_client/base_operation.py
+@@ -147,12 +147,12 @@ class GraphQLField:
+ 
+         # Collect variables from subfields
+         for subfield in self._subfields:
+-            subfield.get_formatted_variables()
+-            formatted_variables.update(subfield.formatted_variables)
++            subfield_formatted_variables = subfield.get_formatted_variables()
++            formatted_variables.update(subfield_formatted_variables)
+ 
+         # Collect variables from inline fragments
+         for subfields in self._inline_fragments.values():
+             for subfield in subfields:
+-                subfield.get_formatted_variables()
+-                formatted_variables.update(subfield.formatted_variables)
++                subfield_formatted_variables = subfield.get_formatted_variables()
++                formatted_variables.update(subfield_formatted_variables)
+         return formatted_variables
+-- 
+2.50.1
+
