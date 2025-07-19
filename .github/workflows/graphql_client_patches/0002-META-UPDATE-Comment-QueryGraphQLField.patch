@@ -1,0 +1,25 @@
+From 316bd5c735da8a99693cb415e7d23506286eebde Mon Sep 17 00:00:00 2001
+From: Alexis Belmonte <alexbelm48@gmail.com>
+Date: Sat, 19 Jul 2025 15:30:45 +0200
+Subject: [PATCH] [META] [UPDATE] Comment `QueryGraphQLField`
+
+---
+ graphql_client/custom_fields.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/graphql_client/custom_fields.py b/graphql_client/custom_fields.py
+index 1762f7c..75527c5 100644
+--- a/graphql_client/custom_fields.py
++++ b/graphql_client/custom_fields.py
+@@ -695,7 +695,7 @@ from .custom_typing_fields import (
+     PushAllowanceEdgeGraphQLField,
+     PushAllowanceGraphQLField,
+     PushGraphQLField,
+-    QueryGraphQLField,
++    # QueryGraphQLField,
+     RateLimitGraphQLField,
+     ReactableGraphQLField,
+     ReactingUserConnectionGraphQLField,
+-- 
+2.50.1
+
