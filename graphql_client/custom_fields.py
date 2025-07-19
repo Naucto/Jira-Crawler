@@ -28310,7 +28310,7 @@ class QueryFields(GraphQLField):
             "enterprise_member_invitation_by_token", arguments=cleared_arguments
         )
 
-    id: "QueryGraphQLField" = QueryGraphQLField("id")
+    id: "GraphQLField" = GraphQLField("id")
 
     @classmethod
     def license(cls, key: str) -> "LicenseFields":
@@ -28667,7 +28667,7 @@ class QueryFields(GraphQLField):
     def fields(
         self,
         *subfields: Union[
-            QueryGraphQLField,
+            # QueryGraphQLField,
             "CodeOfConductFields",
             "EnterpriseAdministratorInvitationFields",
             "EnterpriseFields",
