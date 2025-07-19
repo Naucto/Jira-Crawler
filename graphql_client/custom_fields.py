@@ -695,7 +695,7 @@ from .custom_typing_fields import (
     PushAllowanceEdgeGraphQLField,
     PushAllowanceGraphQLField,
     PushGraphQLField,
-    # QueryGraphQLField,
+    QueryGraphQLField,
     RateLimitGraphQLField,
     ReactableGraphQLField,
     ReactingUserConnectionGraphQLField,
@@ -6218,7 +6218,7 @@ class CopyProjectV2PayloadFields(GraphQLField):
 
     @classmethod
     def project_v_2(cls) -> "ProjectV2Fields":
-        return ProjectV2Fields("projectV2")
+        return ProjectV2Fields("project_v_2")
 
     def fields(
         self, *subfields: Union[CopyProjectV2PayloadGraphQLField, "ProjectV2Fields"]
@@ -6666,7 +6666,7 @@ class CreateProjectV2PayloadFields(GraphQLField):
 
     @classmethod
     def project_v_2(cls) -> "ProjectV2Fields":
-        return ProjectV2Fields("projectV2")
+        return ProjectV2Fields("project_v_2")
 
     def fields(
         self, *subfields: Union[CreateProjectV2PayloadGraphQLField, "ProjectV2Fields"]
@@ -7927,7 +7927,7 @@ class DeleteProjectV2PayloadFields(GraphQLField):
 
     @classmethod
     def project_v_2(cls) -> "ProjectV2Fields":
-        return ProjectV2Fields("projectV2")
+        return ProjectV2Fields("project_v_2")
 
     def fields(
         self, *subfields: Union[DeleteProjectV2PayloadGraphQLField, "ProjectV2Fields"]
@@ -7951,7 +7951,7 @@ class DeleteProjectV2StatusUpdatePayloadFields(GraphQLField):
 
     @classmethod
     def project_v_2(cls) -> "ProjectV2Fields":
-        return ProjectV2Fields("projectV2")
+        return ProjectV2Fields("project_v_2")
 
     def fields(
         self,
@@ -7978,7 +7978,7 @@ class DeleteProjectV2WorkflowPayloadFields(GraphQLField):
 
     @classmethod
     def project_v_2(cls) -> "ProjectV2Fields":
-        return ProjectV2Fields("projectV2")
+        return ProjectV2Fields("project_v_2")
 
     def fields(
         self,
@@ -10214,7 +10214,7 @@ class DraftIssueFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2ConnectionFields("projectsV2", arguments=cleared_arguments)
+        return ProjectV2ConnectionFields("projects_v_2", arguments=cleared_arguments)
 
     title: "DraftIssueGraphQLField" = DraftIssueGraphQLField("title")
     updated_at: "DraftIssueGraphQLField" = DraftIssueGraphQLField("updatedAt")
@@ -14503,7 +14503,7 @@ class IssueFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2Fields("projectV2", arguments=cleared_arguments)
+        return ProjectV2Fields("project_v_2", arguments=cleared_arguments)
 
     @classmethod
     def projects_v_2(
@@ -14532,7 +14532,7 @@ class IssueFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2ConnectionFields("projectsV2", arguments=cleared_arguments)
+        return ProjectV2ConnectionFields("projects_v_2", arguments=cleared_arguments)
 
     published_at: "IssueGraphQLField" = IssueGraphQLField("publishedAt")
 
@@ -16245,7 +16245,7 @@ class MarkProjectV2AsTemplatePayloadFields(GraphQLField):
 
     @classmethod
     def project_v_2(cls) -> "ProjectV2Fields":
-        return ProjectV2Fields("projectV2")
+        return ProjectV2Fields("project_v_2")
 
     def fields(
         self,
@@ -20612,7 +20612,7 @@ class OrganizationFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return IssueTypeConnectionFields("issueTypes", arguments=cleared_arguments)
+        return IssueTypeConnectionFields("issue_types", arguments=cleared_arguments)
 
     @classmethod
     def item_showcase(cls) -> "ProfileItemShowcaseFields":
@@ -20850,7 +20850,7 @@ class OrganizationFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2Fields("projectV2", arguments=cleared_arguments)
+        return ProjectV2Fields("project_v_2", arguments=cleared_arguments)
 
     @classmethod
     def projects(
@@ -20910,7 +20910,7 @@ class OrganizationFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2ConnectionFields("projectsV2", arguments=cleared_arguments)
+        return ProjectV2ConnectionFields("projects_v_2", arguments=cleared_arguments)
 
     @classmethod
     def recent_projects(
@@ -25070,7 +25070,7 @@ class ProjectV2OwnerInterface(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2Fields("projectV2", arguments=cleared_arguments)
+        return ProjectV2Fields("project_v_2", arguments=cleared_arguments)
 
     @classmethod
     def projects_v_2(
@@ -25099,7 +25099,7 @@ class ProjectV2OwnerInterface(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2ConnectionFields("projectsV2", arguments=cleared_arguments)
+        return ProjectV2ConnectionFields("projects_v_2", arguments=cleared_arguments)
 
     def fields(
         self,
@@ -26429,7 +26429,7 @@ class PullRequestFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2Fields("projectV2", arguments=cleared_arguments)
+        return ProjectV2Fields("project_v_2", arguments=cleared_arguments)
 
     @classmethod
     def projects_v_2(
@@ -26458,7 +26458,7 @@ class PullRequestFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2ConnectionFields("projectsV2", arguments=cleared_arguments)
+        return ProjectV2ConnectionFields("projects_v_2", arguments=cleared_arguments)
 
     published_at: "PullRequestGraphQLField" = PullRequestGraphQLField("publishedAt")
 
@@ -28310,7 +28310,7 @@ class QueryFields(GraphQLField):
             "enterprise_member_invitation_by_token", arguments=cleared_arguments
         )
 
-    # id: "QueryGraphQLField" = QueryGraphQLField("id")
+    id: "QueryGraphQLField" = QueryGraphQLField("id")
 
     @classmethod
     def license(cls, key: str) -> "LicenseFields":
@@ -28667,7 +28667,7 @@ class QueryFields(GraphQLField):
     def fields(
         self,
         *subfields: Union[
-            # QueryGraphQLField,
+            QueryGraphQLField,
             "CodeOfConductFields",
             "EnterpriseAdministratorInvitationFields",
             "EnterpriseFields",
@@ -32618,7 +32618,7 @@ class RepositoryFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return IssueTypeConnectionFields("issueTypes", arguments=cleared_arguments)
+        return IssueTypeConnectionFields("issue_types", arguments=cleared_arguments)
 
     @classmethod
     def issues(
@@ -32941,7 +32941,7 @@ class RepositoryFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2Fields("projectV2", arguments=cleared_arguments)
+        return ProjectV2Fields("project_v_2", arguments=cleared_arguments)
 
     @classmethod
     def projects(
@@ -33001,7 +33001,7 @@ class RepositoryFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2ConnectionFields("projectsV2", arguments=cleared_arguments)
+        return ProjectV2ConnectionFields("projects_v_2", arguments=cleared_arguments)
 
     @classmethod
     def pull_request(cls, number: int) -> "PullRequestFields":
@@ -38705,7 +38705,7 @@ class TeamFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2Fields("projectV2", arguments=cleared_arguments)
+        return ProjectV2Fields("project_v_2", arguments=cleared_arguments)
 
     @classmethod
     def projects_v_2(
@@ -38736,7 +38736,7 @@ class TeamFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2ConnectionFields("projectsV2", arguments=cleared_arguments)
+        return ProjectV2ConnectionFields("projects_v_2", arguments=cleared_arguments)
 
     @classmethod
     def repositories(
@@ -40717,7 +40717,7 @@ class UnmarkProjectV2AsTemplatePayloadFields(GraphQLField):
 
     @classmethod
     def project_v_2(cls) -> "ProjectV2Fields":
-        return ProjectV2Fields("projectV2")
+        return ProjectV2Fields("project_v_2")
 
     def fields(
         self,
@@ -42211,7 +42211,7 @@ class UpdateProjectV2PayloadFields(GraphQLField):
 
     @classmethod
     def project_v_2(cls) -> "ProjectV2Fields":
-        return ProjectV2Fields("projectV2")
+        return ProjectV2Fields("project_v_2")
 
     def fields(
         self, *subfields: Union[UpdateProjectV2PayloadGraphQLField, "ProjectV2Fields"]
@@ -43198,7 +43198,7 @@ class UserFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2Fields("projectV2", arguments=cleared_arguments)
+        return ProjectV2Fields("project_v_2", arguments=cleared_arguments)
 
     @classmethod
     def projects(
@@ -43258,7 +43258,7 @@ class UserFields(GraphQLField):
         cleared_arguments = {
             key: value for key, value in arguments.items() if value["value"] is not None
         }
-        return ProjectV2ConnectionFields("projectsV2", arguments=cleared_arguments)
+        return ProjectV2ConnectionFields("projects_v_2", arguments=cleared_arguments)
 
     pronouns: "UserGraphQLField" = UserGraphQLField("pronouns")
 
