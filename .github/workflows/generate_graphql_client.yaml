@@ -33,7 +33,7 @@ jobs:
       - name: Patch generated GraphQL client
         run: |
           for file in .github/workflows/graphql_client_patches/*.patch; do
-            git apply "$file"
+            git apply --allow-empty "$file"
           done
 
       - name: Push generated GraphQL client to repository
