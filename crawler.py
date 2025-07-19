@@ -63,17 +63,18 @@ class Crawler:
 
         self._jira_project: JiraProject = jira_project
 
-    def _transform_issue(self, ql_issue: QlIssue, jira_issue: JiraIssue):
+    async def _transform_issue(self, ql_issue: QlIssue, jira_issue: JiraIssue):
         pass
 
-    def crawl(self):
+    async def crawl(self):
         L.info("Initiated synchronization from Jira to GitHub")
 
-        ql_target_repo = trio.run(self._github_graphql.get_repository, 
-                        self._github_organization_name,
-                        self._github_repository)
+        ql_target_repo = await self._github_graphql.get_repository(
+            self._github_organization_name,
+            self._github_repository
+        )
 
-        ql_existing_projects = trio.run(ql_target_repo.get_projects)
+        ql_existing_projects = await ql_target_repo.get_projects()
         ql_target_project: QlProject | None = next(
             (project for project in ql_existing_projects \
                     if project.title == self._github_project_name),
@@ -83,7 +84,7 @@ class Crawler:
         if ql_target_project is None:
             raise ValueError(f"Target project {self._github_project_name} not found, please create it")
 
-        ql_project_issue_types = trio.run(ql_target_repo.get_issue_types)
+        ql_project_issue_types = await ql_target_repo.get_issue_types()
         L.debug("Found {} issue types in GitHub target project", len(ql_project_issue_types))
         ql_target_issue_type: QlIssueType | None = next(
             (issue_type for issue_type in ql_project_issue_types \
@@ -97,23 +98,25 @@ class Crawler:
 
         jira_issues = self._jira_project.get_issues()
 
-        ql_issues = trio.run(ql_target_repo.get_issues)
+        ql_issues = await ql_target_repo.get_issues()
         ql_issues = {issue.title: issue for issue in ql_issues}
 
         L.info("Updating target GitHub project with {} Jira tasks on {} ({} present)",
                len(jira_issues), self._github_repository, len(ql_issues))
 
         for jira_issue in jira_issues:
-            ql_issue = ql_issues.get(jira_issue.name)
             trsf_issue_name = f"[{jira_issue.id}] {jira_issue.name}"
+            ql_issue = ql_issues.get(trsf_issue_name)
 
             if ql_issue is None:
                 L.debug("Creating new GitHub issue for Jira task {} ({})", jira_issue.id, jira_issue.name)
-                ql_issue = trio.run(ql_target_repo.create_issue, 
-                                    ql_target_issue_type,
-                                    trsf_issue_name,
-                                    jira_issue.description)
+                ql_issue = await ql_target_repo.create_issue(
+                    ql_target_issue_type,
+                    trsf_issue_name,
+                    jira_issue.description
+                )
+
                 continue
 
             L.debug("Processing Jira task {} ({})", jira_issue.id, jira_issue.name)
-            self._transform_issue(ql_issue, jira_issue)
+            await self._transform_issue(ql_issue, jira_issue)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.13
 
 from loguru import logger as L
+import trio
 
 from crawler import Crawler
 
@@ -36,4 +37,5 @@ except Exception as e:
     L.error(f"Error while instanciating crawler: {e}")
     exit(1)
 
-crawler.crawl()
+
+trio.run(crawler.crawl)

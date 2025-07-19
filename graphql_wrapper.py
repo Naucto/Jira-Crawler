@@ -9,12 +9,23 @@ from graphql_client.custom_fields import (
         ProjectV2Fields,
         IssueTypeConnectionFields,
         IssueTypeFields,
-        CreateIssuePayloadFields,
         IssueConnectionFields,
-        IssueFields
+        IssueFields,
+        CreateIssuePayloadFields,
+        DeleteIssuePayloadFields,
+        UpdateIssuePayloadFields,
+        RemoveAssigneesFromAssignablePayloadFields,
+        AddAssigneesToAssignablePayloadFields
 )
 from graphql_client.custom_mutations import Mutation
-from graphql_client.input_types import CreateIssueInput
+from graphql_client.input_types import (
+        IssueState,
+        CreateIssueInput,
+        DeleteIssueInput,
+        UpdateIssueInput,
+        RemoveAssigneesFromAssignableInput,
+        AddAssigneesToAssignableInput
+)
 
 from typing import Dict, Any
 
@@ -71,7 +82,15 @@ class QlIssue:
     def __init__(self, client: "GitHubGraphQlClient", raw_body: Dict[str, Any]):
         self._client = client
 
-        self._assigned_users = list(map(lambda node: QlUser(self._client, node), raw_body["assignedActors"]["nodes"]))
+        # If created, assigned users will be empty
+        self._assigned_users = list(
+            map(
+                lambda node: QlUser(self._client, node),
+                raw_body.get("assignees", {}).get("nodes", [])
+            )
+        )
+        self._prev_assigned_users = list(self._assigned_users)
+
         self._id = raw_body["id"]
         self._title = raw_body["title"]
         self._closed = raw_body["closed"]
@@ -79,6 +98,69 @@ class QlIssue:
         self._created_at = raw_body["createdAt"]
         self._updated_at = raw_body["updatedAt"]
         self._closed_at = raw_body["closedAt"]
+
+    async def delete(self) -> None:
+        mutation = Mutation.delete_issue(
+            DeleteIssueInput(issueId=self._id)
+        ).fields(
+            DeleteIssuePayloadFields.client_mutation_id
+        )
+
+        await self._client.raw.mutation(mutation, operation_name="deleteIssue")
+
+    async def update(self) -> None:
+        mutation = Mutation.update_issue(
+            UpdateIssueInput(
+                id=self._id,
+                title=self._title,
+                body=self._body_text,
+                state=IssueState.CLOSED if self._closed else IssueState.OPEN
+            )
+        ).fields(
+            UpdateIssuePayloadFields.client_mutation_id
+        )
+
+        await self._client.raw.mutation(mutation, operation_name="updateIssue")
+
+        # Get which users were removed
+        removed_users = list(
+            map(lambda user: user.id, filter(
+                lambda user: user not in self._assigned_users,
+                self._prev_assigned_users
+            ))
+        )
+
+        if removed_users:
+            mutation = Mutation.remove_assignees_from_assignable(
+                RemoveAssigneesFromAssignableInput(
+                    assignableId=self._id,
+                    assigneeIds=removed_users
+                )
+            ).fields(
+                RemoveAssigneesFromAssignablePayloadFields.client_mutation_id
+            )
+
+            await self._client.raw.mutation(mutation, operation_name="removeAssigneesFromAssignable")
+
+        # Get which users were added
+        added_users = list(
+            map(lambda user: user.id, filter(
+                lambda user: user not in self._prev_assigned_users,
+                self._assigned_users
+            ))
+        )
+
+        if added_users:
+            mutation = Mutation.add_assignees_to_assignable(
+                AddAssigneesToAssignableInput(
+                    assignableId=self._id,
+                    assigneeIds=list(map(lambda user: user.id, self._assigned_users))
+                )
+            ).fields(
+                AddAssigneesToAssignablePayloadFields.client_mutation_id
+            )
+
+            await self._client.raw.mutation(mutation, operation_name="addAssigneesToAssignable")
 
     @property
     def id(self) -> str:
@@ -92,6 +174,10 @@ class QlIssue:
     def title(self) -> str:
         return self._title
 
+    @title.setter
+    def title(self, new_title: str) -> None:
+        self._title = new_title
+
     @property
     def closed(self) -> bool:
         return self._closed
@@ -99,6 +185,10 @@ class QlIssue:
     @property
     def body_text(self) -> str:
         return self._body_text
+
+    @body_text.setter
+    def body_text(self, new_body_text: str) -> None:
+        self._body_text = new_body_text
 
     @property
     def created_at(self) -> str:
@@ -181,7 +271,7 @@ class Repository:
                     after=cursor
                 ).fields(
                     IssueConnectionFields.nodes().fields(
-                        IssueFields.assignees(first=99).fields(
+                        IssueFields.assignees(first=100).fields(
                             UserConnectionFields.nodes().fields(
                                 UserFields.id,
                                 UserFields.login
