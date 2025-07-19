@@ -63,7 +63,7 @@ class Crawler:
 
         self._jira_project: JiraProject = jira_project
 
-    def _transform_issue(self, ql_issue_type: QlIssueType, ql_issue: QlIssue, jira_issue: JiraIssue):
+    def _transform_issue(self, ql_issue: QlIssue, jira_issue: JiraIssue):
         pass
 
     def crawl(self):
@@ -116,4 +116,4 @@ class Crawler:
                 continue
 
             L.debug("Processing Jira task {} ({})", jira_issue.id, jira_issue.name)
-            self._transform_issue(ql_target_issue_type, ql_issue, jira_issue)
+            self._transform_issue(ql_issue, jira_issue)

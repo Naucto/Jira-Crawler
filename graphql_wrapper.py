@@ -2,6 +2,7 @@ from graphql_client import Client
 from graphql_client.custom_queries import Query
 from graphql_client.custom_fields import (
         UserFields,
+        UserConnectionFields,
         RepositoryFields,
         RepositoryOwnerInterface,
         ProjectV2ConnectionFields, 
@@ -10,7 +11,6 @@ from graphql_client.custom_fields import (
         IssueTypeFields,
         CreateIssuePayloadFields,
         IssueConnectionFields,
-        IssueEdgeFields,
         IssueFields
 )
 from graphql_client.custom_mutations import Mutation
@@ -71,6 +71,7 @@ class QlIssue:
     def __init__(self, client: "GitHubGraphQlClient", raw_body: Dict[str, Any]):
         self._client = client
 
+        self._assigned_users = list(map(lambda node: QlUser(self._client, node), raw_body["assignedActors"]["nodes"]))
         self._id = raw_body["id"]
         self._title = raw_body["title"]
         self._closed = raw_body["closed"]
@@ -82,6 +83,10 @@ class QlIssue:
     @property
     def id(self) -> str:
         return self._id
+
+    @property
+    def assigned_users(self) -> list[QlUser]:
+        return self._assigned_users
 
     @property
     def title(self) -> str:
@@ -123,7 +128,7 @@ class Repository:
             owner=self._ownerLogin,
             name=self._name
         ).fields(
-            RepositoryFields.projects_v_2(
+            RepositoryFields.projects_v2(
                 first=max_projects
             ).fields(
                 ProjectV2ConnectionFields.nodes().fields(
@@ -175,10 +180,13 @@ class Repository:
                     first=100,
                     after=cursor
                 ).fields(
-                    IssueConnectionFields.edges().fields(
-                        IssueEdgeFields.cursor
-                    ),
                     IssueConnectionFields.nodes().fields(
+                        IssueFields.assignees(first=99).fields(
+                            UserConnectionFields.nodes().fields(
+                                UserFields.id,
+                                UserFields.login
+                            )
+                        ),
                         IssueFields.id,
                         IssueFields.title,
                         IssueFields.closed,
