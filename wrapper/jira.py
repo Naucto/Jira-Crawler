@@ -1,4 +1,5 @@
 import jira
+import jira.resources
 
 from typing import Tuple
 
@@ -17,11 +18,11 @@ class JiraUser:
 
 
 class JiraIssue:
-    def __init__(self, jira: jira.JIRA, issue_id: str):
+    def __init__(self, jira: "JiraClient", issue_id: str):
         self._jira = jira
         self._id = issue_id
 
-        self._issue = self._jira.issue(issue_id)
+        self._issue = self._jira.client.issue(issue_id)
 
     @property
     def id(self) -> str:
@@ -36,27 +37,31 @@ class JiraIssue:
         return self._issue.fields.description or ""
 
     @property
-    def issue(self) -> jira.Issue:
-        return self._issue
-
-    @property
     def assignee(self) -> JiraUser | None:
         if self._issue.fields.assignee is None:
             return None
 
         return JiraUser(
-            self._jira.user(id=self._issue.fields.assignee.accountId)
+            self._jira.client.user(id=self._issue.fields.assignee.accountId)
         )
+
+    @property
+    def closed(self) -> bool:
+        return self._issue.fields.status.name == self._jira.done_status.name
+
+    @property
+    def issue(self) -> jira.Issue:
+        return self._issue
 
 
 class JiraEpic(JiraIssue):
-    def __init__(self, jira: jira.JIRA, epic_id: str):
+    def __init__(self, jira: "JiraClient", epic_id: str):
         super().__init__(jira, epic_id)
 
     @property
     def tasks(self) -> list[JiraIssue]:
         return list(map(lambda issue_id: JiraIssue(self._jira, issue_id),
-            self._jira.search_issues(
+            self._jira.client.search_issues(
                 f'type=Task AND parent={self.id} ORDER BY created ASC',
                 maxResults=False
             )
@@ -69,7 +74,7 @@ class JiraProject:
         self._project = project
 
     def get_issues(self) -> list[JiraIssue]:
-        return list(map(lambda issue_id: JiraIssue(self._client._client, issue_id),
+        return list(map(lambda issue_id: JiraIssue(self._client, issue_id),
             self._client._client.search_issues(
                 f'project={self.id} AND type=Task ORDER BY created ASC',
                 maxResults=False
@@ -96,6 +101,22 @@ class JiraClient:
             basic_auth=token_tuple
         )
 
+        done_status = None
+        statuses = self._client.statuses()
+
+        for status in statuses:
+            if status.name.lower() == "done":
+                done_status = status
+                break
+
+        if done_status is None:
+            raise ValueError(
+                "No 'Done' status found in the Jira instance, please check your " +
+                "Jira configuration to have its language set to English."
+            )
+
+        self._done_status = done_status
+
     def get_project(self, project_id: str) -> JiraProject | None:
         try:
             return JiraProject(self, self._client.project(project_id))
@@ -106,5 +127,13 @@ class JiraClient:
             raise e
 
     @property
+    def client(self) -> jira.JIRA:
+        return self._client
+
+    @property
     def base_url(self) -> str:
         return self._client.server_info()["baseUrl"]
+
+    @property
+    def done_status(self) -> jira.resources.Status:
+        return self._done_status
