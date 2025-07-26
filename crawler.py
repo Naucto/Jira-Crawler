@@ -105,8 +105,6 @@ class Crawler:
                 else:
                     L.warning("No mapping found for Jira user {}, please check your user mapping file", source_user.id)
 
-        ql_issue.closed = jira_issue.status == JiraIssueStatus.DONE
-
         await ql_issue.update()
         L.debug("Updated GitHub issue {} with Jira task {} ({})",
                 ql_issue.title, jira_issue.id, jira_issue.name)
@@ -152,6 +150,22 @@ class Crawler:
         L.info("Updating target GitHub project with {} Jira tasks on {} ({} present)",
                len(jira_issues), self._github_repository, len(ql_issues))
 
+        ql_issues_to_delete = [
+            ql_issue for ql_issue in ql_issues.values()
+            if not any(ql_issue.title == self._create_title(jira_issue)
+                       for jira_issue in jira_issues)
+        ]
+
+        L.info("Found {} GitHub issues that need to be closed", len(ql_issues_to_delete))
+        for ql_issue in ql_issues_to_delete:
+            if ql_issue.closed:
+                L.trace("GitHub issue {} already closed, skipping", ql_issue.title)
+                continue
+
+            L.info("Closing GitHub issue {} ({})", ql_issue.title, ql_issue.id)
+            ql_issue.closed = True
+            await ql_issue.update()
+
         for jira_issue in jira_issues:
             trsf_issue_name = self._create_title(jira_issue)
             ql_issue = ql_issues.get(trsf_issue_name)
@@ -171,5 +185,7 @@ class Crawler:
             L.trace("Updating issue from the project's perspective")
             await ql_target_project.add_issue(ql_issue)
             await ql_target_project.set_issue_status(ql_issue, self._transform_issue_status(jira_issue))
+
+
 
         L.info("Synchronization from Jira to GitHub completed successfully. Goodbye world!")
