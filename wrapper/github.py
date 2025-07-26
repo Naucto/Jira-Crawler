@@ -90,7 +90,6 @@ class QlIssue:
                 raw_body.get("assignees", {}).get("nodes", [])
             )
         )
-        self._prev_assigned_users = list(self._assigned_users)
 
         self._id = raw_body["id"]
         self._title = raw_body["title"]
@@ -99,6 +98,9 @@ class QlIssue:
         self._created_at = raw_body["createdAt"]
         self._updated_at = raw_body["updatedAt"]
         self._closed_at = raw_body["closedAt"]
+
+        self._prev_assigned_users = list(self._assigned_users)
+        self._prev_closed = self._closed
 
     async def delete(self) -> None:
         mutation = Mutation.delete_issue(
@@ -110,13 +112,17 @@ class QlIssue:
         await self._client.raw.mutation(mutation, operation_name="deleteIssue")
 
     async def update(self) -> None:
+        update_input = {
+            "id": self._id,
+            "title": self._title,
+            "body": self._body_text,
+        }
+
+        if self._closed != self._prev_closed:
+            update_input["state"] = IssueState.CLOSED if self._closed else IssueState.OPEN
+
         mutation = Mutation.update_issue(
-            UpdateIssueInput(
-                id=self._id,
-                title=self._title,
-                body=self._body_text,
-                state=IssueState.CLOSED if self._closed else IssueState.OPEN
-            )
+            UpdateIssueInput(**update_input)
         ).fields(
             UpdateIssuePayloadFields.client_mutation_id
         )
@@ -186,6 +192,10 @@ class QlIssue:
     @property
     def closed(self) -> bool:
         return self._closed
+
+    @closed.setter
+    def closed(self, new_closed: bool) -> None:
+        self._closed = new_closed
 
     @property
     def body_text(self) -> str:
