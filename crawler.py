@@ -69,13 +69,19 @@ class Crawler:
         mapped_user: QlUser | None = None
 
         if source_user is not None:
-            mapped_user = self._bridge_mapping.map(self._github_graphql, source_user)
+            mapped_user = await self._bridge_mapping.map(self._github_graphql, source_user)
 
             if mapped_user:
                 L.trace("Found mapped user {} for Jira user {}",
-                        mapped_user.login, source_user.email)
+                        mapped_user.login, source_user.id)
 
                 ql_issue.assigned_users = [mapped_user]
+            else:
+                L.trace("No mapping found for Jira user {}", source_user.id)
+
+        await ql_issue.update()
+        L.debug("Updated GitHub issue {} with Jira task {} ({})",
+                ql_issue.title, jira_issue.id, jira_issue.name)
 
     async def crawl(self):
         L.info("Initiated synchronization from Jira to GitHub")

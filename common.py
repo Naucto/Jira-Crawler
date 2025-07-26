@@ -14,18 +14,20 @@ class BridgeMapping:
         if "mapping" not in mapping or not isinstance(mapping["mapping"], dict):
             raise ValueError("Bridge mapping configuration is missing 'mapping' key")
 
-        for user_email, github_user_id in mapping["mapping"].items():
-            if not isinstance(user_email, str) or not isinstance(github_user_id, str):
+        for jira_user_id, github_user_id in mapping["mapping"].items():
+            if not isinstance(jira_user_id, str) or not isinstance(github_user_id, str):
                 raise ValueError("Bridge mapping configuration must have string keys and values")
 
-            self._mapping[user_email] = github_user_id
+            self._mapping[jira_user_id] = github_user_id
 
-    def map(self, ql_client: GitHubGraphQlClient, jira_user: JiraUser) -> QlUser | None:
-        if jira_user.email not in self._mapping:
+    async def map(self, ql_client: GitHubGraphQlClient, jira_user: JiraUser) -> QlUser | None:
+        if jira_user.id not in self._mapping:
             return None
 
-        github_user_id = self._mapping[jira_user.email]
-        github_user = ql_client.get_user(github_user_id)
+        github_user_id = self._mapping[jira_user.id]
+        github_user = await ql_client.get_user(github_user_id)
 
         if github_user is None:
             raise ValueError(f"Github user with ID {github_user_id} not found")
+
+        return github_user
