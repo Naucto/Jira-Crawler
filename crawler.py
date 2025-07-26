@@ -64,9 +64,15 @@ class Crawler:
 
         self._bridge_mapping = bridge_mapping
 
+    def _create_title(self, jira_issue: JiraIssue) -> str:
+        return f"[{jira_issue.id}] {jira_issue.name}"
+
     async def _transform_issue(self, ql_issue: QlIssue, jira_issue: JiraIssue):
         source_user: JiraUser | None = jira_issue.assignee
         mapped_user: QlUser | None = None
+
+        ql_issue.title = self._create_title(jira_issue)
+        ql_issue.body_text = jira_issue.description
 
         if source_user is not None:
             mapped_user = await self._bridge_mapping.map(self._github_graphql, source_user)
@@ -77,7 +83,9 @@ class Crawler:
 
                 ql_issue.assigned_users = [mapped_user]
             else:
-                L.trace("No mapping found for Jira user {}", source_user.id)
+                L.warning("No mapping found for Jira user {}, please check your user mapping file", source_user.id)
+
+        ql_issue.closed = jira_issue.closed
 
         await ql_issue.update()
         L.debug("Updated GitHub issue {} with Jira task {} ({})",
@@ -122,18 +130,18 @@ class Crawler:
                len(jira_issues), self._github_repository, len(ql_issues))
 
         for jira_issue in jira_issues:
-            trsf_issue_name = f"[{jira_issue.id}] {jira_issue.name}"
+            trsf_issue_name = self._create_title(jira_issue)
             ql_issue = ql_issues.get(trsf_issue_name)
 
             if ql_issue is None:
                 L.debug("Creating new GitHub issue for Jira task {} ({})", jira_issue.id, jira_issue.name)
                 ql_issue = await ql_target_repo.create_issue(
                     ql_target_issue_type,
-                    trsf_issue_name,
-                    jira_issue.description
+                    f"[SYNCING] {trsf_issue_name}",
+                    "This issue is currently being synchronized from Jira, please wait."
                 )
-
-                continue
 
             L.debug("Processing Jira task {} ({})", jira_issue.id, jira_issue.name)
             await self._transform_issue(ql_issue, jira_issue)
+
+        L.info("Synchronization from Jira to GitHub completed successfully. Goodbye world!")
