@@ -1,6 +1,7 @@
 import jira
 import jira.resources
 
+from enum import Enum
 from typing import Tuple
 
 
@@ -15,6 +16,27 @@ class JiraUser:
     @property
     def name(self) -> str:
         return self._user.displayName
+
+
+class JiraIssueStatus(Enum):
+    TODO = "To Do"
+    IN_PROGRESS = "In Progress"
+    TO_REVIEW = "To Review" # This one is specific to our workflow, not standard in Jira
+    DONE = "Done"
+
+    @staticmethod
+    def from_jira_status(status: jira.resources.Status) -> "JiraIssueStatus":
+        match status.name.lower():
+            case "to-do":
+                return JiraIssueStatus.TODO
+            case "in progress":
+                return JiraIssueStatus.IN_PROGRESS
+            case "to review":
+                return JiraIssueStatus.TO_REVIEW
+            case "done":
+                return JiraIssueStatus.DONE
+            case _:
+                raise ValueError(f"Unknown Jira status: {status.name}")
 
 
 class JiraIssue:
@@ -46,8 +68,8 @@ class JiraIssue:
         )
 
     @property
-    def closed(self) -> bool:
-        return self._issue.fields.status.name == self._jira.done_status.name
+    def status(self) -> JiraIssueStatus:
+        return JiraIssueStatus.from_jira_status(self._issue.fields.status)
 
     @property
     def issue(self) -> jira.Issue:

@@ -1,7 +1,7 @@
 import json
 
-from wrapper.jira import JiraUser
-from wrapper.github import GitHubGraphQlClient, QlUser
+from wrapper.jira import JiraUser, JiraIssueStatus
+from wrapper.github import GitHubGraphQlClient, QlUser, QlIssueStatus
 
 
 class BridgeMapping:
@@ -31,3 +31,15 @@ class BridgeMapping:
             raise ValueError(f"Github user with ID {github_user_id} not found")
 
         return github_user
+
+
+class JiraIssueStatusMapping:
+    @staticmethod
+    def for_(status: JiraIssueStatus) -> QlIssueStatus:
+        match status:
+            case JiraIssueStatus.TODO:
+                return QlIssueStatus.TODO
+            case JiraIssueStatus.IN_PROGRESS | JiraIssueStatus.TO_REVIEW:
+                return QlIssueStatus.IN_PROGRESS
+            case JiraIssueStatus.DONE:
+                return QlIssueStatus.DONE

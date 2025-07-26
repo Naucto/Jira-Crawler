@@ -7,6 +7,11 @@ from .graphql_client.custom_fields import (
         RepositoryOwnerInterface,
         ProjectV2ConnectionFields, 
         ProjectV2Fields,
+        ProjectV2SingleSelectFieldFields,
+        ProjectV2SingleSelectFieldOptionFields,
+        ProjectV2ItemFields,
+        ProjectV2ItemConnectionFields,
+        ProjectV2ItemEdgeFields,
         IssueTypeConnectionFields,
         IssueTypeFields,
         IssueConnectionFields,
@@ -16,7 +21,9 @@ from .graphql_client.custom_fields import (
         DeleteIssuePayloadFields,
         UpdateIssuePayloadFields,
         RemoveAssigneesFromAssignablePayloadFields,
-        AddAssigneesToAssignablePayloadFields
+        AddAssigneesToAssignablePayloadFields,
+        AddProjectV2ItemByIdPayloadFields,
+        UpdateProjectV2ItemFieldValuePayloadFields
 )
 from .graphql_client.custom_mutations import Mutation
 from .graphql_client.input_types import (
@@ -25,9 +32,13 @@ from .graphql_client.input_types import (
         DeleteIssueInput,
         UpdateIssueInput,
         RemoveAssigneesFromAssignableInput,
-        AddAssigneesToAssignableInput
+        AddAssigneesToAssignableInput,
+        AddProjectV2ItemByIdInput,
+        ProjectV2FieldValue,
+        UpdateProjectV2ItemFieldValueInput
 )
 
+from enum import Enum
 from typing import Dict, Any
 
 
@@ -38,6 +49,12 @@ class QlUser:
         self._id = raw_body["id"]
         self._login = raw_body["login"]
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, QlUser):
+            return False
+
+        return self._id == other._id and self._login == other._login
+
     @property
     def id(self) -> str:
         return self._id
@@ -45,22 +62,6 @@ class QlUser:
     @property
     def login(self) -> str:
         return self._login
-
-
-class QlProject:
-    def __init__(self, client: "GitHubGraphQlClient", raw_body: Dict[str, Any]):
-        self._client = client
-
-        self._id = raw_body["id"]
-        self._title = raw_body["title"]
-
-    @property
-    def id(self) -> str:
-        return self._id
-
-    @property
-    def title(self) -> str:
-        return self._title
 
 
 class QlIssueType:
@@ -77,6 +78,16 @@ class QlIssueType:
     @property
     def title(self) -> str:
         return self._name
+
+
+class QlIssueStatus(Enum):
+    TODO = "TODO"
+    IN_PROGRESS = "IN_PROGRESS"
+    DONE = "DONE"
+
+    @classmethod
+    def from_string(cls, status: str) -> "QlIssueStatus":
+        return cls[status.upper().replace(" ", "_")]
 
 
 class QlIssue:
@@ -218,7 +229,174 @@ class QlIssue:
         return self._closed_at
 
 
-class Repository:
+class QlProject:
+    def __init__(self,
+                 client: "GitHubGraphQlClient",
+                 repository: "QlRepository", raw_body: Dict[str, Any]):
+        self._client = client
+        self._repository = repository
+
+        self._id = raw_body["id"]
+        self._number = raw_body["number"]
+        self._title = raw_body["title"]
+
+        self._field_ids: Dict[str, str] = {}
+        self._status_field_option_ids: Dict[QlIssueStatus, str] = {}
+        self._issue_item_ids: Dict[str, str] = {}
+
+    async def _fetch_field_id(self, field_name: str) -> str:
+        if field_name in self._field_ids:
+            return self._field_ids[field_name]
+
+        query = Query.repository(
+            owner=self._repository._ownerLogin,
+            name=self._repository._name
+        ).fields(
+            RepositoryFields.project_v2(
+                number=self._number
+            ).fields(
+                ProjectV2Fields.field(name=field_name).on(
+                    "ProjectV2SingleSelectField",
+                    ProjectV2SingleSelectFieldFields.id
+                )
+            )
+        )
+
+        response = await self._client.raw.query(query, operation_name="repository")
+        field_id = response["repository"]["projectV2"]["field"]["id"]
+
+        self._field_ids[field_name] = field_id
+        return field_id
+
+    async def _fetch_status_field_option_id(self, status: QlIssueStatus) -> str:
+        if status in self._status_field_option_ids:
+            return self._status_field_option_ids[status]
+
+        query = Query.repository(
+            owner=self._repository._ownerLogin,
+            name=self._repository._name
+        ).fields(
+            RepositoryFields.project_v2(
+                number=self._number
+            ).fields(
+                ProjectV2Fields.field(name="Status").on(
+                    "ProjectV2SingleSelectField",
+                    ProjectV2SingleSelectFieldFields.options().fields(
+                        ProjectV2SingleSelectFieldOptionFields.id,
+                        ProjectV2SingleSelectFieldOptionFields.name
+                    )
+                )
+            )
+        )
+
+        response = await self._client.raw.query(query, operation_name="repository")
+
+        self._status_field_option_ids.update({
+            QlIssueStatus.from_string(option["name"]): option["id"]
+            for option in response["repository"]["projectV2"]["field"]["options"]
+        })
+
+        if status not in self._status_field_option_ids:
+            raise ValueError(f"Status {status} not found in project {self._title}")
+
+        return self._status_field_option_ids[status]
+
+    async def _fetch_issue_item_id(self, issue: QlIssue) -> str:
+        if issue.id in self._issue_item_ids:
+            return self._issue_item_ids[issue.id]
+
+        cursor = None
+
+        while True:
+            query = Query.repository(
+                owner=self._repository._ownerLogin,
+                name=self._repository._name
+            ).fields(
+                RepositoryFields.project_v2(
+                    number=self._number
+                ).fields(
+                    ProjectV2Fields.items(
+                        first=100,
+                        after=cursor
+                    ).fields(
+                        ProjectV2ItemConnectionFields.nodes().fields(
+                            ProjectV2ItemFields.id,
+                            ProjectV2ItemFields.type
+                        ),
+                        ProjectV2ItemConnectionFields.edges().fields(
+                            ProjectV2ItemEdgeFields.cursor
+                        )
+                    )
+                )
+            )
+
+            response = await self._client.raw.query(query, operation_name="repository")
+
+            self._issue_item_ids.update({
+                item["id"]: item["id"]
+                for item in response["repository"]["projectV2"]["items"]["nodes"]
+                if item["id"] not in self._issue_item_ids and item["type"] == "ISSUE"
+            })
+
+            # FIXME: 100 is a hard limit, hardcoded here but fine for our use case
+
+            if len(self._issue_item_ids) >= 100 or not response["repository"]["projectV2"]["items"]["edges"]:
+                break
+
+            cursor = response["repository"]["projectV2"]["items"]["edges"][-1]["cursor"]
+
+        if issue.id not in self._issue_item_ids:
+            raise ValueError(f"Issue {issue.id} not found in project {self._title}")
+
+        return self._issue_item_ids[issue.id]
+
+
+    async def add_issue(self, issue: QlIssue) -> None:
+        mutation = Mutation.add_project_v_2_item_by_id(
+            AddProjectV2ItemByIdInput(
+                projectId=self._id,
+                contentId=issue.id
+            )
+        ).fields(
+            AddProjectV2ItemByIdPayloadFields.client_mutation_id,
+            AddProjectV2ItemByIdPayloadFields.item().fields(
+                ProjectV2ItemFields.id
+            )
+        )
+
+        response = await self._client.raw.mutation(mutation, operation_name="addProjectV2Item")
+        issue_item_id = response["addProjectV2ItemById"]["item"]["id"]
+
+        self._issue_item_ids[issue.id] = issue_item_id
+
+    async def set_issue_status(self, issue: QlIssue, status: QlIssueStatus) -> None:
+        status_field_id: str = await self._fetch_field_id("Status")
+
+        mutation = Mutation.update_project_v_2_item_field_value(
+            UpdateProjectV2ItemFieldValueInput(
+                projectId=self._id,
+                itemId=await self._fetch_issue_item_id(issue),
+                fieldId=status_field_id,
+                value=ProjectV2FieldValue(
+                    single_select_option_id=await self._fetch_status_field_option_id(status) # type: ignore
+                )
+            )
+        ).fields(
+            UpdateProjectV2ItemFieldValuePayloadFields.client_mutation_id
+        )
+
+        await self._client.raw.mutation(mutation, operation_name="updateProjectV2ItemFieldValue")
+
+    @property
+    def id(self) -> str:
+        return self._id
+
+    @property
+    def title(self) -> str:
+        return self._title
+
+
+class QlRepository:
     def __init__(self, client: "GitHubGraphQlClient", raw_body: Dict[str, Any]):
         self._client = client
 
@@ -238,6 +416,7 @@ class Repository:
             ).fields(
                 ProjectV2ConnectionFields.nodes().fields(
                     ProjectV2Fields.id,
+                    ProjectV2Fields.number,
                     ProjectV2Fields.title
                 )
             )
@@ -246,7 +425,7 @@ class Repository:
         response = await self._client.raw.query(query, operation_name="repository")
 
         return list(
-            map(lambda node: QlProject(self._client, node),
+            map(lambda node: QlProject(self._client, self, node),
                 response["repository"]["projectsV2"]["nodes"])
         )
 
@@ -370,7 +549,7 @@ class GitHubGraphQlClient:
             headers={"authorization": f"Bearer {github_token}"}
         )
 
-    async def get_repository(self, owner: str, name: str) -> Repository:
+    async def get_repository(self, owner: str, name: str) -> "QlRepository":
         query = Query.repository(
             owner=owner,
             name=name
@@ -385,7 +564,7 @@ class GitHubGraphQlClient:
 
         response = await self._client.query(query, operation_name="repository")
 
-        return Repository(self, response["repository"])
+        return QlRepository(self, response["repository"])
 
     async def get_viewer(self) -> QlUser:
         query = Query.viewer().fields(

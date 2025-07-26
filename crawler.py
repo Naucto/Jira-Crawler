@@ -1,6 +1,20 @@
-from wrapper.github import GitHubGraphQlClient, QlUser, QlProject, QlIssueType, QlIssue
-from wrapper.jira import JiraClient, JiraUser, JiraProject, JiraEpic, JiraIssue
-from common import BridgeMapping
+from wrapper.github import (
+        GitHubGraphQlClient,
+        QlUser,
+        QlProject,
+        QlIssueType,
+        QlIssue,
+        QlIssueStatus
+)
+from wrapper.jira import (
+        JiraClient,
+        JiraUser,
+        JiraProject,
+        JiraEpic,
+        JiraIssue,
+        JiraIssueStatus
+)
+from common import BridgeMapping, JiraIssueStatusMapping
 
 import github
 
@@ -77,19 +91,28 @@ class Crawler:
         if source_user is not None:
             mapped_user = await self._bridge_mapping.map(self._github_graphql, source_user)
 
-            if mapped_user:
-                L.trace("Found mapped user {} for Jira user {}",
-                        mapped_user.login, source_user.id)
-
-                ql_issue.assigned_users = [mapped_user]
+            if len(ql_issue.assigned_users) == 1 and ql_issue.assigned_users[0] == mapped_user:
+                L.trace("GitHub issue {} already assigned to user {}, skipping",
+                        ql_issue.title, source_user.id)
             else:
-                L.warning("No mapping found for Jira user {}, please check your user mapping file", source_user.id)
+                L.trace("Assigning GitHub issue {} to user {}", ql_issue.title, source_user.id)
 
-        ql_issue.closed = jira_issue.closed
+                if mapped_user:
+                    L.trace("Found mapped user {} for Jira user {}",
+                            mapped_user.login, source_user.id)
+
+                    ql_issue.assigned_users = [mapped_user]
+                else:
+                    L.warning("No mapping found for Jira user {}, please check your user mapping file", source_user.id)
+
+        ql_issue.closed = jira_issue.status == JiraIssueStatus.DONE
 
         await ql_issue.update()
         L.debug("Updated GitHub issue {} with Jira task {} ({})",
                 ql_issue.title, jira_issue.id, jira_issue.name)
+
+    def _transform_issue_status(self, jira_issue: JiraIssue) -> QlIssueStatus:
+        return JiraIssueStatusMapping.for_(jira_issue.status)
 
     async def crawl(self):
         L.info("Initiated synchronization from Jira to GitHub")
@@ -143,5 +166,10 @@ class Crawler:
 
             L.debug("Processing Jira task {} ({})", jira_issue.id, jira_issue.name)
             await self._transform_issue(ql_issue, jira_issue)
+
+            # Whether if it's already there or not, GitHub accepts it
+            L.debug("Updating issue from the project's perspective")
+            await ql_target_project.add_issue(ql_issue)
+            await ql_target_project.set_issue_status(ql_issue, self._transform_issue_status(jira_issue))
 
         L.info("Synchronization from Jira to GitHub completed successfully. Goodbye world!")
