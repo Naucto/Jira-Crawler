@@ -157,7 +157,7 @@ class Crawler:
             ql_issue = ql_issues.get(trsf_issue_name)
 
             if ql_issue is None:
-                L.debug("Creating new GitHub issue for Jira task {} ({})", jira_issue.id, jira_issue.name)
+                L.trace("Creating new GitHub issue for Jira task {} ({})", jira_issue.id, jira_issue.name)
                 ql_issue = await ql_target_repo.create_issue(
                     ql_target_issue_type,
                     f"[SYNCING] {trsf_issue_name}",
@@ -168,7 +168,7 @@ class Crawler:
             await self._transform_issue(ql_issue, jira_issue)
 
             # Whether if it's already there or not, GitHub accepts it
-            L.debug("Updating issue from the project's perspective")
+            L.trace("Updating issue from the project's perspective")
             await ql_target_project.add_issue(ql_issue)
             await ql_target_project.set_issue_status(ql_issue, self._transform_issue_status(jira_issue))
 
