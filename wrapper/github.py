@@ -12,6 +12,8 @@ from .graphql_client.custom_fields import (
         ProjectV2ItemFields,
         ProjectV2ItemConnectionFields,
         ProjectV2ItemEdgeFields,
+        MilestoneConnectionFields,
+        MilestoneFields,
         IssueTypeConnectionFields,
         IssueTypeFields,
         IssueConnectionFields,
@@ -64,6 +66,27 @@ class QlUser:
         return self._login
 
 
+class QlMilestone:
+    def __init__(self, client: "GitHubGraphQlClient", raw_body: Dict[str, Any]):
+        self._client = client
+
+        self._id = raw_body["id"]
+        self._title = raw_body["title"]
+        self._description = raw_body["description"]
+
+    @property
+    def id(self) -> str:
+        return self._id
+
+    @property
+    def title(self) -> str:
+        return self._title
+
+    @property
+    def description(self) -> str:
+        return self._description
+
+
 class QlIssueType:
     def __init__(self, client: "GitHubGraphQlClient", raw_body: Dict[str, Any]):
         self._client = client
@@ -109,6 +132,8 @@ class QlIssue:
         self._created_at = raw_body["createdAt"]
         self._updated_at = raw_body["updatedAt"]
         self._closed_at = raw_body["closedAt"]
+        self._milestone = QlMilestone(self._client, raw_body["milestone"]) \
+            if ("milestone" in raw_body and raw_body["milestone"] is not None) else None
 
         self._prev_assigned_users = list(self._assigned_users)
         self._prev_closed = self._closed
@@ -127,6 +152,7 @@ class QlIssue:
             "id": self._id,
             "title": self._title,
             "body": self._body_text,
+            "milestone_id": self._milestone.id if self._milestone else None
         }
 
         if self._closed != self._prev_closed:
@@ -217,6 +243,14 @@ class QlIssue:
         self._body_text = new_body_text
 
     @property
+    def milestone(self) -> QlMilestone | None:
+        return self._milestone
+
+    @milestone.setter
+    def milestone(self, new_milestone: QlMilestone | None) -> None:
+        self._milestone = new_milestone
+
+    @property
     def created_at(self) -> str:
         return self._created_at
 
@@ -249,7 +283,7 @@ class QlProject:
             return self._field_ids[field_name]
 
         query = Query.repository(
-            owner=self._repository._ownerLogin,
+            owner=self._repository._owner_login,
             name=self._repository._name
         ).fields(
             RepositoryFields.project_v2(
@@ -273,7 +307,7 @@ class QlProject:
             return self._status_field_option_ids[status]
 
         query = Query.repository(
-            owner=self._repository._ownerLogin,
+            owner=self._repository._owner_login,
             name=self._repository._name
         ).fields(
             RepositoryFields.project_v2(
@@ -309,7 +343,7 @@ class QlProject:
 
         while True:
             query = Query.repository(
-                owner=self._repository._ownerLogin,
+                owner=self._repository._owner_login,
                 name=self._repository._name
             ).fields(
                 RepositoryFields.project_v2(
@@ -401,14 +435,14 @@ class QlRepository:
         self._client = client
 
         self._id = raw_body["id"]
-        self._ownerId = raw_body["owner"]["id"]
-        self._ownerLogin = raw_body["owner"]["login"]
+        self._owner_id = raw_body["owner"]["id"]
+        self._owner_login = raw_body["owner"]["login"]
 
         self._name = raw_body["name"]
 
     async def get_projects(self, max_projects: int = 100) -> list[QlProject]:
         query = Query.repository(
-            owner=self._ownerLogin,
+            owner=self._owner_login,
             name=self._name
         ).fields(
             RepositoryFields.projects_v2(
@@ -431,7 +465,7 @@ class QlRepository:
 
     async def get_issue_types(self, max_types: int = 100) -> list[QlIssueType]:
         query = Query.repository(
-            owner=self._ownerLogin,
+            owner=self._owner_login,
             name=self._name
         ).fields(
             RepositoryFields.issue_types(
@@ -457,7 +491,7 @@ class QlRepository:
 
         while True:
             query = Query.repository(
-                owner=self._ownerLogin,
+                owner=self._owner_login,
                 name=self._name
             ).fields(
                 RepositoryFields.issues(
@@ -477,7 +511,12 @@ class QlRepository:
                         IssueFields.body_text,
                         IssueFields.created_at,
                         IssueFields.updated_at,
-                        IssueFields.closed_at
+                        IssueFields.closed_at,
+                        IssueFields.milestone().fields(
+                            MilestoneFields.id,
+                            MilestoneFields.title,
+                            MilestoneFields.description
+                        )
                     ),
                     IssueConnectionFields.edges().fields(
                         IssueEdgeFields.cursor
@@ -517,13 +556,58 @@ class QlRepository:
                 IssueFields.body_text,
                 IssueFields.created_at,
                 IssueFields.updated_at,
-                IssueFields.closed_at
+                IssueFields.closed_at,
+                IssueFields.milestone().fields(
+                    MilestoneFields.id,
+                    MilestoneFields.title,
+                    MilestoneFields.description
+                )
             )
         )
 
         response = await self._client.raw.mutation(mutation, operation_name="createIssue")
 
         return QlIssue(self._client, response["createIssue"]["issue"])
+
+    async def get_milestones(self, max_milestones: int = 100) -> list[QlMilestone]:
+        query = Query.repository(
+            owner=self._owner_login,
+            name=self._name
+        ).fields(
+            RepositoryFields.milestones(
+                first=max_milestones
+            ).fields(
+                MilestoneConnectionFields.nodes().fields(
+                    MilestoneFields.id,
+                    MilestoneFields.title,
+                    MilestoneFields.description
+                )
+            )
+        )
+
+        response = await self._client.raw.query(query, operation_name="repository")
+
+        return list(
+            map(lambda node: QlMilestone(self._client, node),
+                response["repository"]["milestones"]["nodes"])
+        )
+
+    async def get_milestone(self, milestone_id: int) -> QlMilestone | None:
+        query = Query.repository(
+            owner=self._owner_login,
+            name=self._name
+        ).fields(
+            RepositoryFields.milestone(number=milestone_id).fields(
+                MilestoneFields.id,
+                MilestoneFields.title,
+                MilestoneFields.description
+            )
+        )
+
+        response = await self._client.raw.query(query, operation_name="repository")
+
+        return QlMilestone(self._client, response["repository"]["milestone"]) \
+            if response["repository"]["milestone"] else None
 
     @property
     def id(self) -> str:
@@ -534,12 +618,12 @@ class QlRepository:
         return self._name
 
     @property
-    def ownerId(self) -> str:
-        return self._ownerId
+    def owner_id(self) -> str:
+        return self._owner_id
 
     @property
-    def ownerLogin(self) -> str:
-        return self._ownerLogin
+    def owner_login(self) -> str:
+        return self._owner_login
 
 
 class GitHubGraphQlClient:

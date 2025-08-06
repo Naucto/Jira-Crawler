@@ -44,7 +44,22 @@ class JiraIssue:
         self._jira = jira
         self._id = issue_id
 
-        self._issue = self._jira.client.issue(issue_id)
+        issue = self._jira.client.issue(issue_id)
+
+        self._summary = issue.fields.summary
+        self._description = issue.fields.description or ""
+        self._assignee = issue.fields.assignee
+        self._status = issue.fields.status
+
+        self._epic = JiraEpic(jira, issue.fields.parent.key) if "parent" in issue.fields.__dict__ else None
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, JiraIssue):
+            return False
+        return self._id == other._id
+
+    def __hash__(self) -> int:
+        return hash(self._id)
 
     @property
     def id(self) -> str:
@@ -52,28 +67,28 @@ class JiraIssue:
 
     @property
     def name(self) -> str:
-        return self._issue.fields.summary
+        return self._summary
 
     @property
     def description(self) -> str:
-        return self._issue.fields.description or ""
+        return self._description
 
     @property
     def assignee(self) -> JiraUser | None:
-        if self._issue.fields.assignee is None:
+        if self._assignee is None:
             return None
 
         return JiraUser(
-            self._jira.client.user(id=self._issue.fields.assignee.accountId)
+            self._jira.client.user(id=self._assignee.accountId)
         )
 
     @property
     def status(self) -> JiraIssueStatus:
-        return JiraIssueStatus.from_jira_status(self._issue.fields.status)
+        return JiraIssueStatus.from_jira_status(self._status)
 
     @property
-    def issue(self) -> jira.Issue:
-        return self._issue
+    def epic(self) -> "JiraEpic | None":
+        return self._epic
 
 
 class JiraEpic(JiraIssue):
@@ -82,7 +97,7 @@ class JiraEpic(JiraIssue):
 
     @property
     def tasks(self) -> list[JiraIssue]:
-        return list(map(lambda issue_id: JiraIssue(self._jira, issue_id),
+        return list(map(lambda issue_id: JiraIssue(self._jira, issue_id.key), # type: ignore
             self._jira.client.search_issues(
                 f'type=Task AND parent={self.id} ORDER BY created ASC',
                 maxResults=False
@@ -93,10 +108,21 @@ class JiraEpic(JiraIssue):
 class JiraProject:
     def __init__(self, client: "JiraClient", project: jira.Project):
         self._client = client
-        self._project = project
+
+        self._id = project.id
+        self._key = project.key
+        self._name = project.name
+
+    def get_epics(self) -> list[JiraEpic]:
+        return list(map(lambda issue_id: JiraEpic(self._client, issue_id.key), # type: ignore
+            self._client._client.search_issues(
+                f'project={self.id} AND type=Epic ORDER BY created ASC',
+                maxResults=False
+            )
+        ))
 
     def get_issues(self) -> list[JiraIssue]:
-        return list(map(lambda issue_id: JiraIssue(self._client, issue_id),
+        return list(map(lambda issue_id: JiraIssue(self._client, issue_id.key), # type: ignore
             self._client._client.search_issues(
                 f'project={self.id} AND type=Task ORDER BY created ASC',
                 maxResults=False
@@ -105,15 +131,15 @@ class JiraProject:
 
     @property
     def id(self) -> str:
-        return self._project.id
+        return self._id
 
     @property
     def key(self) -> str:
-        return self._project.key
+        return self._key
 
     @property
     def name(self) -> str:
-        return self._project.name
+        return self._name
 
 
 class JiraClient:

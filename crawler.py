@@ -4,19 +4,20 @@ from wrapper.github import (
         QlProject,
         QlIssueType,
         QlIssue,
-        QlIssueStatus
+        QlIssueStatus,
+        QlMilestone
 )
 from wrapper.jira import (
         JiraClient,
         JiraUser,
         JiraProject,
         JiraEpic,
-        JiraIssue,
-        JiraIssueStatus
+        JiraIssue
 )
 from common import BridgeMapping, JiraIssueStatusMapping
 
 import github
+import github.Milestone
 
 from loguru import logger as L
 
@@ -42,9 +43,9 @@ class Crawler:
             raise ValueError("Github repository is not in the correct format")
 
         (
-                github_organization_name,
-                github_repo_name,
-                github_project_name
+            github_organization_name,
+            github_repo_name,
+            github_project_name
         ) = tuple(github_repository_set[:3]) # type: ignore
 
         self._github_organization_name = github_organization_name
@@ -78,15 +79,33 @@ class Crawler:
 
         self._bridge_mapping = bridge_mapping
 
-    def _create_title(self, jira_issue: JiraIssue) -> str:
+    def _create_epic_title(self, jira_epic: JiraEpic) -> str:
+        return f"[{jira_epic.id}] {jira_epic.name}"
+
+    def _transform_epic(self, jira_epic: JiraEpic, rs_milestone: github.Milestone.Milestone):
+        L.debug("Transforming Jira epic {} ({})", jira_epic.id, jira_epic.name)
+
+        rs_milestone.edit(
+            title = self._create_epic_title(jira_epic),
+            description = jira_epic.description
+        )
+
+        L.debug("Updated GitHub milestone {} with Jira epic {} ({})",
+                rs_milestone.title, jira_epic.id, jira_epic.name)
+
+    def _create_issue_title(self, jira_issue: JiraIssue) -> str:
         return f"[{jira_issue.id}] {jira_issue.name}"
 
-    async def _transform_issue(self, ql_issue: QlIssue, jira_issue: JiraIssue):
+    async def _transform_issue(self, epic_mapping: dict[JiraEpic, QlMilestone],
+                               ql_issue: QlIssue, jira_issue: JiraIssue):
+        L.debug("Transforming Jira task {} ({})", jira_issue.id, jira_issue.name)
+
         source_user: JiraUser | None = jira_issue.assignee
         mapped_user: QlUser | None = None
 
-        ql_issue.title = self._create_title(jira_issue)
+        ql_issue.title = self._create_issue_title(jira_issue)
         ql_issue.body_text = jira_issue.description
+        ql_issue.milestone = epic_mapping.get(jira_issue.epic) if jira_issue.epic else None
 
         if source_user is not None:
             mapped_user = await self._bridge_mapping.map(self._github_graphql, source_user)
@@ -115,10 +134,16 @@ class Crawler:
     async def crawl(self):
         L.info("Initiated synchronization from Jira to GitHub")
 
+        rs_github_repo = self._github_rest.get_repo(
+            f"{self._github_organization_name}/{self._github_repository}"
+        )
+
         ql_target_repo = await self._github_graphql.get_repository(
             self._github_organization_name,
             self._github_repository
         )
+
+        L.debug("Connected to GitHub REST/GraphQL endpoints")
 
         ql_existing_projects = await ql_target_repo.get_projects()
         ql_target_project: QlProject | None = next(
@@ -142,17 +167,51 @@ class Crawler:
             L.error("Target issue type 'Task' not found in GitHub project, something is wrong")
             return
 
+        rs_milestones = rs_github_repo.get_milestones(state="open")
+        rs_milestones = {milestone.title: milestone for milestone in rs_milestones}
+
+        jira_epics = self._jira_project.get_epics()
+        L.info("Found {} Jira epics in project {}", len(jira_epics), self._jira_project.name)
+
+        for jira_epic in jira_epics:
+            trsf_epic_name = f"[{jira_epic.id}] {jira_epic.name}"
+            rs_milestone = rs_milestones.get(trsf_epic_name)
+
+            if rs_milestone is None:
+                L.warning("Creating GitHub milestone for Jira epic {} ({})",
+                           jira_epic.id, jira_epic.name)
+                rs_milestone = rs_github_repo.create_milestone(
+                    title=trsf_epic_name,
+                    description=jira_epic.description
+                )
+
+            self._transform_epic(jira_epic, rs_milestone)
+
+        ql_milestones = await ql_target_repo.get_milestones()
+        ql_milestones = {milestone.title: milestone for milestone in ql_milestones}
+
+        epic_mapping: dict[JiraEpic, QlMilestone] = {
+            jira_epic: ql_milestones[self._create_epic_title(jira_epic)]
+            for jira_epic in jira_epics
+        }
+
+        L.debug("Epic to milestone mapping created with {} entries", len(epic_mapping))
+
         jira_issues = self._jira_project.get_issues()
+
+        L.trace("Found {} Jira issues in project {}", len(jira_issues), self._jira_project.name)
 
         ql_issues = await ql_target_repo.get_issues()
         ql_issues = {issue.title: issue for issue in ql_issues}
+
+        L.debug("Found {} GitHub issues in project {}", len(ql_issues), self._github_project_name)
 
         L.info("Updating target GitHub project with {} Jira tasks on {} ({} present)",
                len(jira_issues), self._github_repository, len(ql_issues))
 
         ql_issues_to_delete = [
             ql_issue for ql_issue in ql_issues.values()
-            if not any(ql_issue.title == self._create_title(jira_issue)
+            if not any(ql_issue.title == self._create_issue_title(jira_issue)
                        for jira_issue in jira_issues)
         ]
 
@@ -167,7 +226,7 @@ class Crawler:
             await ql_issue.update()
 
         for jira_issue in jira_issues:
-            trsf_issue_name = self._create_title(jira_issue)
+            trsf_issue_name = self._create_issue_title(jira_issue)
             ql_issue = ql_issues.get(trsf_issue_name)
 
             if ql_issue is None:
@@ -178,14 +237,11 @@ class Crawler:
                     "This issue is currently being synchronized from Jira, please wait."
                 )
 
-            L.debug("Processing Jira task {} ({})", jira_issue.id, jira_issue.name)
-            await self._transform_issue(ql_issue, jira_issue)
+            await self._transform_issue(epic_mapping, ql_issue, jira_issue)
 
             # Whether if it's already there or not, GitHub accepts it
             L.trace("Updating issue from the project's perspective")
             await ql_target_project.add_issue(ql_issue)
             await ql_target_project.set_issue_status(ql_issue, self._transform_issue_status(jira_issue))
-
-
 
         L.info("Synchronization from Jira to GitHub completed successfully. Goodbye world!")
