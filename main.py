@@ -12,6 +12,7 @@ import os
 L.info("Hello, world from Naucto's Jira Crawler!")
 
 env_set = {
+    "CW_JIRA_SERVER_URL": "jira_server_url",
     "CW_JIRA_TOKEN": "jira_token",
     "CW_JIRA_PROJECT_ID": "jira_project_id",
     "CW_GITHUB_TOKEN": "github_token",
@@ -30,6 +31,7 @@ for env_var_name, global_var_name in env_set.items():
 
 try:
     crawler = Crawler(
+        jira_server_url=jira_server_url, # type: ignore
         jira_token=jira_token, # type: ignore
         jira_project_id=jira_project_id, # type: ignore
         github_token=github_token, # type: ignore

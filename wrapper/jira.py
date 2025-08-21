@@ -149,6 +149,10 @@ class JiraClient:
             basic_auth=token_tuple
         )
 
+        if len(self._client.projects()) == 0:
+            raise ValueError("No projects found in the Jira instance. " +
+                             "Please check your server URL and/or your authentication token.")
+
         done_status = None
         statuses = self._client.statuses()
 
@@ -159,8 +163,9 @@ class JiraClient:
 
         if done_status is None:
             raise ValueError(
-                "No 'Done' status found in the Jira instance, please check your " +
-                "Jira configuration to have its language set to English."
+                "No 'Done' status found in the Jira instance. " +
+                "Your instance is not set to English or the workflow is not " +
+                "configured correctly."
             )
 
         self._done_status = done_status

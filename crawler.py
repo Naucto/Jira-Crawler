@@ -25,8 +25,8 @@ from loguru import logger as L
 class Crawler:
     MAX_PROJECTS = 25
 
-    def __init__(self, jira_token: str, jira_project_id: str, github_token: str,
-                 github_repository: str, bridge_mapping: BridgeMapping):
+    def __init__(self, jira_server_url: str, jira_token: str, jira_project_id: str,
+                 github_token: str, github_repository: str, bridge_mapping: BridgeMapping):
         self._github_rest = github.Github(
             login_or_token=github_token,
             auth=github.Auth.Token(github_token)
@@ -65,7 +65,7 @@ class Crawler:
 
         jira_token_tuple: tuple[str, str] = tuple(jira_token_set[:2]) # type: ignore
 
-        self._jira = JiraClient("https://naucto.atlassian.net", jira_token_tuple)
+        self._jira = JiraClient(jira_server_url, jira_token_tuple)
 
         L.info("Jira authenticated successfully")
         L.debug("Jira instance is at {}", self._jira.base_url)
