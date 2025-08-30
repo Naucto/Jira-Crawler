@@ -264,13 +264,13 @@ class CrawlerWorker:
 
     def _worker(self):
         while True:
-            context = self._work_queue.get()
+            context = self._work_queue.get() # pyright: ignore[reportUnusedExpression]
             L.info("Received work task")
 
             trio.run(self._crawler.crawl)
 
             L.info("Done working on the task")
 
-    def commit(self, context: any):
+    def commit(self, context: None):
         self._work_queue.put(context)
         L.debug("Commited work task")
