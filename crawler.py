@@ -21,6 +21,11 @@ import github.Milestone
 
 from loguru import logger as L
 
+import trio
+
+from queue import Queue
+from threading import Thread
+
 
 class Crawler:
     MAX_PROJECTS = 25
@@ -245,3 +250,27 @@ class Crawler:
             await ql_target_project.set_issue_status(ql_issue, self._transform_issue_status(jira_issue))
 
         L.info("Synchronization from Jira to GitHub completed successfully. Goodbye world!")
+
+
+class CrawlerWorker:
+    def __init__(self, crawler: Crawler):
+        self._crawler = crawler
+
+        self._work_queue = Queue()
+        self._work_thread = Thread(target=self._worker, daemon=True)
+
+        self._work_thread.start()
+        L.debug("Crawler worker thread started")
+
+    def _worker(self):
+        while True:
+            context = self._work_queue.get()
+            L.info("Received work task")
+
+            trio.run(self._crawler.crawl)
+
+            L.info("Done working on the task")
+
+    def commit(self, context: any):
+        self._work_queue.put(context)
+        L.debug("Commited work task")
