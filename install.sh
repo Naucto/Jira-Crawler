@@ -319,7 +319,7 @@ EOF
         cat >"$temp_mapping_path" <<EOF
 {
     "mapping": {
-        // To add a new mapping, add a new line in the follwing format:
+        // To add a new mapping, add a new line in the following format:
         // "jira_user_hash": "github_username"
         //
         // You can get the Jira user hash by going to the user's profile and
@@ -408,8 +408,8 @@ WantedBy=network.target
 EOF
 
     sv_status_show "Installing the mapping file"
-    sv_try_as "$tool_su" "$sv_repo_userowner" "Copy the mapping file to the installation location." \
-              "cp -f '$mapping_path' '$SV_SERVICE_MAPPING_PATH'"
+    sv_try "Copy the mapping file to the installation location." \
+           "cp -f '$mapping_path' '$SV_SERVICE_MAPPING_PATH'"
 
     sv_status_show "Installing the environment file"
 
