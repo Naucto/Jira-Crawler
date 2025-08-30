@@ -17,6 +17,8 @@ SV_SERVICE_ENV_FNAME=".config"
 SV_SERVICE_ENV_PATH="$SV_INSTALL_PATH/$SV_SERVICE_ENV_FNAME"
 SV_SERVICE_VENV_FNAME=".env"
 SV_SERVICE_VENV_PATH="$SV_INSTALL_PATH/$SV_SERVICE_VENV_FNAME"
+SV_SERVICE_MAPPING_FNAME="mapping.json"
+SV_SERVICE_MAPPING_PATH="$SV_INSTALL_PATH/$SV_SERVICE_MAPPING_FNAME"
 
 sv_require()
 {
@@ -153,7 +155,6 @@ an Atlassian cloud instance, or a more classical self-hosted instance.
 
 Any instance that is PyJira compatible is de-facto supported, but please check
 its documentation first before assuming that it will work for your setup.
-
 EOF
 
     jira_instance_url="`sv_question "What is the URL to your Jira instance?" \
@@ -176,9 +177,9 @@ administration panel of your self-hosted instance.
 For Atlassian cloud instances, you can generate a token here:
 $jira_instance_url/plugins/servlet/webhooks
 
-The token is in a format similar to this: user@company.com/abcDEFghi
-The e-mail is not given by Jira, so you must specify it yourself.
+We expect you to specify the token in the following format:
 
+    <user email>/<api token>
 EOF
 
     jira_api_token="`sv_question "What is your Jira API token?" ""`"
@@ -201,7 +202,6 @@ You can find your project ID by going to your project in Jira and looking
 at the URL, by going to the project settings and looking at the specified ID,
 or by checking any task. The ID is the part before the hyphen in the task's
 URL or title.
-
 EOF
 
     jira_project_id="`sv_question "What is your Jira project ID?" "NCTO"`"
@@ -226,7 +226,6 @@ https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/m
 
 Make sure to authenticate your fine-grained GitHub token against the official
 Epitech organization associated with your account.
-
 EOF
     github_token="`sv_question "What is the student GitHub token that you want to use?" \
                                "")`"
@@ -251,34 +250,12 @@ https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/m
 
 Make sure to authenticate your fine-grained GitHub token against the official
 Epitech organization associated with your account.
-
 EOF
     github_token="`sv_question "What is the student GitHub token that you want to use?" \
                                "")`"
 
     if [ -z "$github_token" ]; then
         echo "$0: No GitHub token provided, cannot continue." >&2
-        exit 1
-    fi
-
-    # ---
-
-    cat >&2 <<EOF
-
-The service needs to know from which GitHub organization you want to synchronize
-the main student repository to.
-
-You do not need to specify the full URL path to it, only the name/identifier of
-that organization. For example, Naucto is located at https://github.com/Naucto,
-so we shall specify 'Naucto' for this question.
-
-EOF
-
-    source_organization="`sv_question "What is the source GitHub organization you want to sync from?" \
-                                      "Naucto"`"
-
-    if [ -z "$source_organization" ]; then
-        echo "$0: No GitHub source organization specified, cannot continue." >&2
         exit 1
     fi
 
@@ -295,10 +272,84 @@ The name of that project is what you need to specify for this question.
 We cannot automatically create a project for you, as the Epitech's student
 organization does not allow us to do so.
 
+We expect you to specify the full path to that project, in the following
+format:
+
+    <organization>/<repository>/<project>
+
+For example, if your GitHub organization is EpitechPromo2027, your repository
+is G-EIP-600-MPL-6-1-eip-alexis.belmonte and your project is Naucto Jira
+Mirror, the path will be as follow:
+
+    EpitechPromo2027/G-EIP-600-MPL-6-1-eip-alexis.belmonte/Naucto Jira Mirror
 EOF
 
     target_project="`sv_question "What is the target GitHub project you want to sync to?" \
-                                 "Nauctoi Jira Mirror"`"
+                                 "EpitechPromo2027/G-EIP-600-MPL-6-1-eip-alexis.belmonte/Naucto Jira Mirror"`"
+
+    # ---
+
+    cat >&2 <<EOF
+
+To map the Jira users' account IDs to GitHub accounts, we need you to provide a
+file known as a mapping.
+
+It is a simple JSON file that maps Jira user emails to GitHub usernames.
+
+Here's an example layout of such a file:
+
+{
+    "mapping": {
+        "5e1b8de0a0120f0ca70bd51d": "alexis-belmonte",
+        "712020:b836fa27-0aff-4920-bb9d-c19745e86fdf": "TheodoreBillotte",
+        "63bd221204b5f5c7b5ed0dd3": "Louis-rollet",
+        "63bd201eeac4f07e3f3b69d4": "notgoyome",
+        "712020:1e173d69-d28e-408c-8999-85f5f293caab": "Priax",
+        "635bfca0e14026a739801d28": "emaurel"
+    }
+}
+EOF
+
+    mapping_create_now="`sv_question "Do you want to create a mapping file now?" "yes"`"
+
+    if [ "$mapping_create_now" = "yes" ] || \
+       [ "$mapping_create_now" = "y" ]; then
+        temp_mapping_path="`mktemp`"
+
+        cat >"$temp_mapping_path" <<EOF
+{
+    "mapping": {
+        // To add a new mapping, add a new line in the follwing format:
+        // "jira_user_hash": "github_username"
+        //
+        // You can get the Jira user hash by going to the user's profile and
+        // looking at the URL. It is the part after the last slash.
+    }
+}
+EOF
+
+        ${EDITOR:-nano} "$temp_mapping_path"
+
+        if [ "$?" -ne 0 ]; then
+            echo "$0: Failed to launch the editor, you will need to create it manually." >&2
+            rm -f "$temp_mapping_path"
+
+            mapping_create_now="no"
+        fi
+    fi
+
+    if [ "$mapping_create_now" = "no" ] || \
+       [ ! -f "$temp_mapping_path" ]; then
+        mapping_path="`sv_question "What is the path to your mapping file?" \
+                               "$SV_INSTALL_PATH/$SV_SERVICE_MAPPING_FNAME"`"
+    else
+        mapping_path="$temp_mapping_path"
+    fi
+
+    if [ ! -f "$mapping_path" ]; then
+        echo "$0: The mapping file '$mapping_path' does not exist, cannot continue." >&2
+        exit 1
+    fi
 
     # ---
 
@@ -316,21 +367,6 @@ EOF
     if ! id -u "$SV_SERVICE_USER" >/dev/null 2>/dev/null; then
         sv_try "Create a dedicated service user" \
                "$tool_useradd -m $SV_SERVICE_USER"
-    fi
-
-    sv_try_as "$tool_su" "$SV_SERVICE_USER" "Create the SSH directory" \
-              "mkdir -p '~/.ssh'"
-    sv_try "Copy the SSH private key over to the dedicated service user" \
-           "cp '$private_key_path' '/home/$SV_SERVICE_USER/.ssh/id_ed25519'"
-    sv_try "Configure SSH private key file ownership" \
-           "chown $SV_SERVICE_USER:$SV_SERVICE_USER '/home/$SV_SERVICE_USER/.ssh/id_ed25519'"
-    sv_try "Configure SSH private key file permissions" \
-           "chmod 700 '/home/$SV_SERVICE_USER/.ssh/id_ed25519'"
-
-    su "$SV_SERVICE_USER" -c "ssh-keyscan -t rsa github.com >'/home/$SV_SERVICE_USER/.ssh/known_hosts' 2>&1"
-    if [ $? -ne 0 ]; then
-        echo "$0: Failed to generate known hosts file for service user, cannot continue."
-        exit 1
     fi
 
     sv_status_show "Downloading service repository and installing it in $SV_INSTALL_PATH"
@@ -357,7 +393,7 @@ EOF
 
     cat >"$SV_SERVICE_PATH" <<EOF
 [Unit]
-Description=Naucto Repository Crawler Service
+Description=Naucto Jira Crawler Service
 After=network.target
 ConditionPathExists=$SV_INSTALL_PATH
 
@@ -371,6 +407,10 @@ Restart=on-failure
 WantedBy=network.target
 EOF
 
+    sv_status_show "Installing the mapping file"
+    sv_try_as "$tool_su" "$sv_repo_userowner" "Copy the mapping file to the installation location." \
+              "cp -f '$mapping_path' '$SV_SERVICE_MAPPING_PATH'"
+
     sv_status_show "Installing the environment file"
 
     cat >"$SV_SERVICE_ENV_PATH" <<EOF
@@ -378,9 +418,12 @@ LOGURU_LEVEL=INFO
 
 CW_HOST=1
 CW_HOST_CERT=$certificates_path
+CW_JIRA_SERVER_URL=$jira_instance_url
+CW_JIRA_TOKEN=$jira_api_token
+CW_JIRA_PROJECT_ID=$jira_project_id
 CW_GITHUB_TOKEN=$github_token
-CW_GITHUB_SOURCE=$source_organization
-CW_GITHUB_TARGET=$target_repository
+CW_GITHUB_TARGET=$target_project
+CW_BRIDGE_MAPPING=$SV_SERVICE_MAPPING_PATH
 EOF
 
     sv_status_show "Installing the service script file"
@@ -435,14 +478,14 @@ EOF
 
     cat >&2 <<EOF
 
-Congratulations! The Naucto Repository Crawler service is now up and running on
+Congratulations! The Naucto Jira Crawler service is now up and running on
 your machine.
 
 You may update or uninstall this service by using this installer script again
 with a different verb, in the installation location or where you just executed
 this script.
 
-Report any issues here: https://github.com/Naucto/Repository-Crawler/issues
+Report any issues here: https://github.com/Naucto/Jira-Crawler/issues
 
 We hope that it will satisfy you, just as much as it satisfies us! :]
 EOF
@@ -489,6 +532,7 @@ sv_action_update()
            "mv '$save_dir_path/$SV_SERVICE_ENV_FNAME' '$SV_SERVICE_ENV_PATH' && \
             mv '$save_dir_path/$SV_SERVICE_VENV_FNAME' '$SV_SERVICE_VENV_PATH' && \
             mv '$save_dir_path/$SV_SERVICE_SCRIPT_FNAME' '$SV_SERVICE_SCRIPT_PATH' && \
+            mv '$save_dir_path/$SV_SERVICE_MAPPING_FNAME' '$SV_SERVICE_MAPPING_PATH' && \
             mv '$save_dir_path/$SV_INSTALL_DEFAULT_CERT_FNAME' '$SV_INSTALL_DEFAULT_CERT_PATH'"
     sv_try "Remove temporary directory that contained the virtual Python environment and settings." \
            "rm -rf '$save_dir_path'"
@@ -525,7 +569,7 @@ EOF
     fi
 
     cat >&2 <<EOF
-ATTENTION! You are about to uninstall the repository crawler service. All files
+ATTENTION! You are about to uninstall the Jira crawler service. All files
 and the associated service user will be removed from this machine.
 
 EOF
@@ -624,7 +668,7 @@ sv_unlock
 
 cat <<EOF
 
-Naucto Repository Crawler service installer script
+Naucto Jira Crawler service installer script
 Copyright (C) 2025 Naucto - Under the MIT license. See license.txt for more details.
 
 EOF
@@ -639,7 +683,7 @@ shift 1
 
 if [ "$primary_command" = "-h" ]; then
     cat >&2 <<EOF
-Utility to setup the Naucto Repository Crawler service on a systemd-based
+Utility to setup the Naucto Jira Crawler service on a systemd-based
 system.
 
 EOF
@@ -653,7 +697,7 @@ Options:
 
 Commands:
 
-    install         Install the Naucto Repository Crawler as a systemd-based
+    install         Install the Naucto Jira Crawler as a systemd-based
                     service on the current system.
                     This will duplicate the contents of the repository to the
                     installation path, create a systemd service file for it
