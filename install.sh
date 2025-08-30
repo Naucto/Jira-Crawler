@@ -239,30 +239,6 @@ EOF
 
     cat >&2 <<EOF
 
-The service requires write access to the project owner's student repository
-project. Thus, we need to have a fine-grained GitHub token associated to a
-student account.
-
-Creating a fine-grained GitHub token is easy. Follow the guide on the official
-GitHub documentation website:
-
-https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token
-
-Make sure to authenticate your fine-grained GitHub token against the official
-Epitech organization associated with your account.
-EOF
-    github_token="`sv_question "What is the student GitHub token that you want to use?" \
-                               "")`"
-
-    if [ -z "$github_token" ]; then
-        echo "$0: No GitHub token provided, cannot continue." >&2
-        exit 1
-    fi
-
-    # ---
-
-    cat >&2 <<EOF
-
 The service needs to know which GitHub project to synchonize the student
 repository to.
 
