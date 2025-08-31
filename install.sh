@@ -395,10 +395,10 @@ LOGURU_LEVEL=INFO
 CW_HOST=1
 CW_HOST_CERT=$certificates_path
 CW_JIRA_SERVER_URL=$jira_instance_url
-CW_JIRA_TOKEN=$jira_api_token
+CW_JIRA_TOKEN="$jira_api_token"
 CW_JIRA_PROJECT_ID=$jira_project_id
 CW_GITHUB_TOKEN=$github_token
-CW_GITHUB_TARGET=$target_project
+CW_GITHUB_TARGET="$target_project"
 CW_BRIDGE_MAPPING=$SV_SERVICE_MAPPING_PATH
 EOF
 

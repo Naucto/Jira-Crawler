@@ -35,6 +35,7 @@ class WebhookListener:
 
         @self._app.post("/")
         def on_event():
+            self._worker.commit(None)
             return "", 200
 
     def run(self):
